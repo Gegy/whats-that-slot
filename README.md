@@ -3,3 +3,5 @@ This mod is a simple utility that allows you to query which items can be placed 
 
 This is particularly useful in modded environments where it may not be clear what items can be placed in a modded
 GUI.
+
+![Demonstration](https://i.imgur.com/nZahUCW.gif)
