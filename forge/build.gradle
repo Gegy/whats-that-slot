@@ -1,0 +1,103 @@
+buildscript {
+  repositories {
+    maven { url "https://maven.minecraftforge.net" }
+    maven { url "https://maven.parchmentmc.org" }
+    maven { url 'https://repo.spongepowered.org/maven' }
+    mavenCentral()
+  }
+  dependencies {
+    classpath group: "net.minecraftforge.gradle", name: "ForgeGradle", version: "5.1.+", changing: true
+    classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+    classpath 'org.parchmentmc:librarian:1.+'
+  }
+}
+
+apply plugin: "java"
+apply plugin: "net.minecraftforge.gradle"
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
+
+archivesBaseName = "$mod_name-forge"
+
+minecraft {
+  mappings channel: "parchment", version: "$parchment_version-$minecraft_version"
+
+  runs {
+    client {
+      taskName "client"
+      workingDirectory project.file("run")
+      ideaModule "${rootProject.name}.${project.name}.main"
+      arg "-mixin.config=${mod_id}.mixins.json"
+
+      mods {
+        whats_that_slot {
+          source sourceSets.main
+          source project(":common").sourceSets.main
+        }
+      }
+    }
+
+    server {
+      taskName "server"
+      workingDirectory project.file("run")
+      ideaModule "${rootProject.name}.${project.name}.main"
+      arg "-mixin.config=${mod_id}.mixins.json"
+
+      mods {
+        whats_that_slot {
+          source sourceSets.main
+          source project(":common").sourceSets.main
+        }
+      }
+    }
+
+    data {
+      taskName "data"
+      workingDirectory project.file("run")
+      ideaModule "${rootProject.name}.${project.name}.main"
+      args "--mod", mod_id, "--all", "--output", file("src/generated/resources/"), "--existing", file("src/main/resources/")
+      arg "-mixin.config=${mod_id}.mixins.json"
+
+      mods {
+        whats_that_slot {
+          source sourceSets.main
+          source project(":common").sourceSets.main
+        }
+      }
+    }
+  }
+}
+
+sourceSets.main.resources.srcDir "src/generated/resources"
+
+dependencies {
+  compileOnly project(":common")
+
+  minecraft "net.minecraftforge:forge:$minecraft_version-$forge_version"
+
+  annotationProcessor "org.spongepowered:mixin:0.8.3:processor"
+}
+
+mixin {
+  add project(":common").sourceSets.main, "${mod_id}.refmap.json"
+  add sourceSets.main, "${mod_id}.refmap.json"
+}
+
+processResources {
+  from project(":common").sourceSets.main.resources
+}
+
+tasks.withType(JavaCompile).configureEach {
+  it.source(project(":common").sourceSets.main.allSource)
+}
+
+jar.finalizedBy("reobfJar")
+
+// fix for mixin annotation processing handling incorrectly in IDEA gradle sync
+if (System.getProperty("idea.sync.active") == "true") {
+  afterEvaluate {
+    tasks.withType(JavaCompile).all {
+      it.options.annotationProcessorPath = files()
+    }
+  }
+}

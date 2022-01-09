@@ -1,0 +1,26 @@
+modLoader = "javafml"
+loaderVersion = "[38,)"
+license = "LGPLv3"
+issueTrackerURL = "https://github.com/Gegy/whats-that-slot"
+
+[[mods]]
+modId = "whats_that_slot"
+version = "${file.jarVersion}"
+displayName = "What's That Slot"
+authors = "Gegy"
+description = '''
+Utility that highlights which items can be placed in an item slot while holding down Left Alt.'''
+
+[[dependencies.whats_that_slot]]
+modId = "forge"
+mandatory = true
+versionRange = "[38,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.whats_that_slot]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.18,)"
+ordering = "NONE"
+side = "BOTH"
