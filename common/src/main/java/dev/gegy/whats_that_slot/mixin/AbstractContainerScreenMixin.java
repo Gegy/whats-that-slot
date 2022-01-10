@@ -26,13 +26,13 @@ public class AbstractContainerScreenMixin implements SlotQueryingScreen {
     private final SlotQueryController queryController = new SlotQueryController((AbstractContainerScreen<?>) (Object) this);
     @Unique private Slot querySlot;
 
-    @Inject(method = "init", at = @At("RETURN"))
+    @Inject(method = "init()V", at = @At("RETURN"))
     private void init(CallbackInfo ci) {
         this.queryController.reset();
         this.querySlot = null;
     }
 
-    @Inject(method = "render", at = @At("RETURN"))
+    @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;IIF)V", at = @At("RETURN"))
     private void captureAndClearFocusedSlot(PoseStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         this.querySlot = this.hoveredSlot;
         if (this.queryController.isActive()) {
@@ -40,13 +40,13 @@ public class AbstractContainerScreenMixin implements SlotQueryingScreen {
         }
     }
 
-    @Inject(method = "tick", at = @At("HEAD"))
+    @Inject(method = "tick()V", at = @At("HEAD"))
     private void tickQuery(CallbackInfo ci) {
         var window = Minecraft.getInstance().getWindow();
         this.queryController.tick(this.querySlot, SlotQueryInput.isRequestingQuery(window));
     }
 
-    @Inject(method = "renderTooltip", at = @At("TAIL"))
+    @Inject(method = "renderTooltip(Lcom/mojang/blaze3d/vertex/PoseStack;II)V", at = @At("TAIL"))
     private void drawQueryDisplay(PoseStack matrices, int mouseX, int mouseY, CallbackInfo ci) {
         float delta = Minecraft.getInstance().getDeltaFrameTime();
         this.queryController.draw(matrices, mouseX, mouseY, delta);
@@ -60,21 +60,21 @@ public class AbstractContainerScreenMixin implements SlotQueryingScreen {
         }
     }
 
-    @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "mouseClicked(DDI)Z", at = @At("HEAD"), cancellable = true)
     private void mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> ci) {
         if (this.queryController.mouseClicked(mouseX, mouseY, button)) {
             ci.setReturnValue(true);
         }
     }
 
-    @Inject(method = "mouseDragged", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "mouseDragged(DDIDD)Z", at = @At("HEAD"), cancellable = true)
     private void mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY, CallbackInfoReturnable<Boolean> ci) {
         if (this.queryController.mouseDragged(mouseX, mouseY, button, deltaX, deltaY)) {
             ci.setReturnValue(true);
         }
     }
 
-    @Inject(method = "mouseReleased", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "mouseReleased(DDI)Z", at = @At("HEAD"), cancellable = true)
     private void mouseReleased(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> ci) {
         if (this.queryController.mouseReleased(mouseX, mouseY, button)) {
             ci.setReturnValue(true);

@@ -16,7 +16,7 @@ public class MouseHandlerMixin {
     @Shadow @Final private Minecraft minecraft;
 
     @Inject(
-            method = "onScroll",
+            method = "onScroll(JDD)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;mouseScrolled(DDD)Z", shift = At.Shift.BEFORE),
             locals = LocalCapture.CAPTURE_FAILHARD,
             cancellable = true
