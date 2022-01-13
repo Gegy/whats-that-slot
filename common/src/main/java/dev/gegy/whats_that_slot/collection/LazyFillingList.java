@@ -1,7 +1,6 @@
-package dev.gegy.whats_that_slot.query;
+package dev.gegy.whats_that_slot.collection;
 
 import com.google.common.collect.AbstractIterator;
-import com.google.common.collect.Iterables;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -20,11 +19,6 @@ public final class LazyFillingList<T> extends AbstractList<T> {
     }
 
     public static <T> LazyFillingList<T> ofIterable(Iterable<T> source, int size) {
-        int actualSize = Iterables.size(source);
-        if (actualSize != size) {
-            throw new IllegalStateException("???");
-        }
-
         return new LazyFillingList<>(source.iterator(), size);
     }
 

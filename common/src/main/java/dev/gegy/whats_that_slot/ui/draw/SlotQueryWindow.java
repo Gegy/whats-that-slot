@@ -3,6 +3,7 @@ package dev.gegy.whats_that_slot.ui.draw;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.gegy.whats_that_slot.WhatsThatSlot;
+import dev.gegy.whats_that_slot.collection.ConcatList;
 import dev.gegy.whats_that_slot.query.SlotQuery;
 import dev.gegy.whats_that_slot.ui.Bounds2i;
 import dev.gegy.whats_that_slot.ui.scroll.ScrollView;
@@ -62,7 +63,7 @@ public final class SlotQueryWindow extends GuiComponent {
     private double scrollerSelectY;
 
     public SlotQueryWindow(AbstractContainerScreen<?> screen, Slot slot, SlotQuery query) {
-        this.slots = new SlotGrid(GRID, query.getResults());
+        this.slots = new SlotGrid(GRID, ConcatList.of(query.inventoryItems(), query.globalItems()));
         this.scrollView = this.slots.createScrollView();
 
         var screenBounds = Bounds2i.ofScreen(screen);

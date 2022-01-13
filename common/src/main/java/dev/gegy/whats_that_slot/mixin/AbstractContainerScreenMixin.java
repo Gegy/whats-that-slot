@@ -22,8 +22,10 @@ import javax.annotation.Nullable;
 public class AbstractContainerScreenMixin implements SlotQueryingScreen {
     @Shadow @Nullable protected Slot hoveredSlot;
 
-    @Unique
-    private final SlotQueryController queryController = new SlotQueryController((AbstractContainerScreen<?>) (Object) this);
+    @Unique private final SlotQueryController queryController = new SlotQueryController(
+            Minecraft.getInstance().player,
+            (AbstractContainerScreen<?>) (Object) this
+    );
     @Unique private Slot querySlot;
 
     @Inject(method = "init()V", at = @At("RETURN"))

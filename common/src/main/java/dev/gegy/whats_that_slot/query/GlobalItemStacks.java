@@ -10,16 +10,13 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Iterator;
+import java.util.function.Predicate;
 
 public final class GlobalItemStacks implements Iterable<ItemStack> {
     private int size = -1;
 
-    public Iterable<ItemStack> filter(SlotFilter filter) {
-        if (!filter.acceptsAll()) {
-            return Iterables.filter(this, filter::accepts);
-        } else {
-            return this;
-        }
+    public Iterable<ItemStack> filter(Predicate<ItemStack> filter) {
+        return Iterables.filter(this, filter::test);
     }
 
     @Override

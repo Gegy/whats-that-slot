@@ -3,26 +3,13 @@ package dev.gegy.whats_that_slot.query;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-public interface SlotFilter {
-    int ACCEPTS_ALL = 1 << 1;
+import java.util.function.Predicate;
 
-    static SlotFilter all() {
-        return new SlotFilter() {
-            @Override
-            public boolean accepts(ItemStack stack) {
-                return true;
-            }
-
-            @Override
-            public int characteristics() {
-                return ACCEPTS_ALL;
-            }
-        };
-    }
-
-    static SlotFilter includedBy(Slot slot) {
+public final class SlotFilter {
+    public static Predicate<ItemStack> includedBy(Slot slot) {
+        // TODO: this is not used to a significant extent- it may be worth removing
         if (!SlotMetadata.doesOverridePlaceTest(slot)) {
-            return SlotFilter.all();
+            return item -> true;
         }
 
         return stack -> {
@@ -32,15 +19,5 @@ public interface SlotFilter {
                 return false;
             }
         };
-    }
-
-    boolean accepts(ItemStack stack);
-
-    default int characteristics() {
-        return 0;
-    }
-
-    default boolean acceptsAll() {
-        return (this.characteristics() & SlotFilter.ACCEPTS_ALL) != 0;
     }
 }

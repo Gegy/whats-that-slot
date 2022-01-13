@@ -5,19 +5,22 @@ import dev.gegy.whats_that_slot.query.SlotQuery;
 import dev.gegy.whats_that_slot.ui.draw.SlotQueryWindow;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public final class ActiveQueryState implements SlotQueryState {
+    private final Player player;
     private final AbstractContainerScreen<?> screen;
     private final Slot slot;
     private final SlotQueryWindow window;
 
     private boolean windowSelected;
 
-    public ActiveQueryState(AbstractContainerScreen<?> screen, Slot slot, SlotQuery query) {
+    public ActiveQueryState(Player player, AbstractContainerScreen<?> screen, Slot slot, SlotQuery query) {
+        this.player = player;
         this.screen = screen;
         this.slot = slot;
         this.window = new SlotQueryWindow(screen, slot, query);
@@ -27,7 +30,7 @@ public final class ActiveQueryState implements SlotQueryState {
     @Nonnull
     public SlotQueryState tick(@Nullable Slot focusedSlot, boolean requestingQuery) {
         if (focusedSlot != this.slot && !this.windowSelected) {
-            return new IdleQueryState(this.screen);
+            return new IdleQueryState(this.player, this.screen);
         } else {
             return this;
         }
