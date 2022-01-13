@@ -11,10 +11,7 @@ public record QueriedItem(ItemStack itemStack, boolean highlighted) {
         return new QueriedItem(itemStack, true);
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-
-        return obj instanceof QueriedItem item && ItemStack.matches(this.itemStack, item.itemStack);
+    public boolean matches(ItemStack target) {
+        return ItemStack.isSameItemSameTags(this.itemStack, target);
     }
 }

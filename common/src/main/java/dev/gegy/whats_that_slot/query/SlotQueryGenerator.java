@@ -5,7 +5,7 @@ import dev.gegy.whats_that_slot.WhatsThatSlot;
 import dev.gegy.whats_that_slot.collection.ConcatList;
 import dev.gegy.whats_that_slot.collection.LazyFillingList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
@@ -20,8 +20,8 @@ public final class SlotQueryGenerator {
     private State state;
     private SlotQuery results;
 
-    public SlotQueryGenerator(Inventory inventory, Predicate<ItemStack> filter) {
-        this.state = new MatchingInventory(inventory, filter);
+    public SlotQueryGenerator(AbstractContainerScreen<?> screen, Predicate<ItemStack> filter) {
+        this.state = new MatchingInventory(screen, filter);
     }
 
     @Nullable
@@ -63,9 +63,9 @@ public final class SlotQueryGenerator {
 
         private final Set<ItemStack> inventoryMatches = new ItemStackLinkedSet();
 
-        private MatchingInventory(Inventory inventory, Predicate<ItemStack> filter) {
+        private MatchingInventory(AbstractContainerScreen<?> screen, Predicate<ItemStack> filter) {
             this.filter = filter;
-            this.inventoryIterator = InventoryItemStacks.iterator(inventory);
+            this.inventoryIterator = MenuItemStacks.of(screen).iterator();
         }
 
         @Override

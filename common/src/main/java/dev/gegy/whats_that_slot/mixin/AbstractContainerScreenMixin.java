@@ -7,7 +7,9 @@ import dev.gegy.whats_that_slot.ui.state.SlotQueryController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -21,9 +23,9 @@ import javax.annotation.Nullable;
 @Mixin(AbstractContainerScreen.class)
 public class AbstractContainerScreenMixin implements SlotQueryingScreen {
     @Shadow @Nullable protected Slot hoveredSlot;
+    @Shadow @Final protected AbstractContainerMenu menu;
 
     @Unique private final SlotQueryController queryController = new SlotQueryController(
-            Minecraft.getInstance().player,
             (AbstractContainerScreen<?>) (Object) this
     );
     @Unique private Slot querySlot;
@@ -45,7 +47,8 @@ public class AbstractContainerScreenMixin implements SlotQueryingScreen {
     @Inject(method = "tick()V", at = @At("HEAD"))
     private void tickQuery(CallbackInfo ci) {
         var window = Minecraft.getInstance().getWindow();
-        this.queryController.tick(this.querySlot, SlotQueryInput.isRequestingQuery(window));
+        var carriedItem = this.menu.getCarried();
+        this.queryController.tick(this.querySlot, SlotQueryInput.isRequestingQuery(window) && carriedItem.isEmpty());
     }
 
     @Inject(method = "renderTooltip(Lcom/mojang/blaze3d/vertex/PoseStack;II)V", at = @At("TAIL"))

@@ -1,4 +1,4 @@
-package dev.gegy.whats_that_slot.ui.draw;
+package dev.gegy.whats_that_slot.ui.window;
 
 import dev.gegy.whats_that_slot.query.QueriedItem;
 import dev.gegy.whats_that_slot.ui.scroll.ScrollView;

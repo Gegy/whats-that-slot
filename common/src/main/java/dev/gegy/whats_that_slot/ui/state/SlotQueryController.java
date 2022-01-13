@@ -3,25 +3,22 @@ package dev.gegy.whats_that_slot.ui.state;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 
 import javax.annotation.Nullable;
 
 public final class SlotQueryController {
-    private final Player player;
     private final AbstractContainerScreen<?> screen;
 
     private SlotQueryState state;
 
-    public SlotQueryController(Player player, AbstractContainerScreen<?> screen) {
-        this.player = player;
+    public SlotQueryController(AbstractContainerScreen<?> screen) {
         this.screen = screen;
         this.reset();
     }
 
     public void reset() {
-        this.state = new IdleQueryState(this.player, this.screen);
+        this.state = new IdleQueryState(this.screen);
     }
 
     public void tick(@Nullable Slot hoveredSlot, boolean requestingQuery) {

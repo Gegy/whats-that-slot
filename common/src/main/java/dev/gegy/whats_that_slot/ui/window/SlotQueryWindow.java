@@ -1,4 +1,4 @@
-package dev.gegy.whats_that_slot.ui.draw;
+package dev.gegy.whats_that_slot.ui.window;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -6,6 +6,8 @@ import dev.gegy.whats_that_slot.WhatsThatSlot;
 import dev.gegy.whats_that_slot.query.QueriedItem;
 import dev.gegy.whats_that_slot.query.SlotQuery;
 import dev.gegy.whats_that_slot.ui.Bounds2i;
+import dev.gegy.whats_that_slot.ui.action.ScreenSlotActions;
+import dev.gegy.whats_that_slot.ui.action.SlotSelector;
 import dev.gegy.whats_that_slot.ui.scroll.ScrollView;
 import dev.gegy.whats_that_slot.ui.scroll.Scrollbar;
 import net.minecraft.client.Minecraft;
@@ -58,6 +60,11 @@ public final class SlotQueryWindow extends GuiComponent {
             SCROLLER_WIDTH, SCROLLER_HEIGHT
     );
 
+    private final AbstractContainerScreen<?> screen;
+    private final SlotSelector slotSelector;
+
+    private final Slot queriedSlot;
+
     private final SlotGrid slots;
     private final ScrollView scrollView;
 
@@ -66,14 +73,19 @@ public final class SlotQueryWindow extends GuiComponent {
     private boolean selectedScroller;
     private double scrollerSelectY;
 
-    public SlotQueryWindow(AbstractContainerScreen<?> screen, Slot slot, SlotQuery query) {
+    public SlotQueryWindow(AbstractContainerScreen<?> screen, Slot queriedSlot, SlotQuery query) {
+        this.screen = screen;
+        this.slotSelector = SlotSelector.of(screen);
+
+        this.queriedSlot = queriedSlot;
+
         this.slots = new SlotGrid(GRID, query.items());
         this.scrollView = this.slots.createScrollView();
 
         var screenBounds = Bounds2i.ofScreen(screen);
         var bounds = Bounds2i.ofSize(
-                screenBounds.x0() + slot.x + 8,
-                screenBounds.y0() + slot.y + 8,
+                screenBounds.x0() + queriedSlot.x + 8,
+                screenBounds.y0() + queriedSlot.y + 8,
                 WIDTH, HEIGHT
         );
 
@@ -181,28 +193,30 @@ public final class SlotQueryWindow extends GuiComponent {
     }
 
     public boolean mouseClicked(double mouseX, double mouseY) {
-        double windowMouseX = mouseX - this.bounds.x0();
-        double windowMouseY = mouseY - this.bounds.y0();
+        if (this.isSelected(mouseX, mouseY)) {
+            double windowMouseX = mouseX - this.bounds.x0();
+            double windowMouseY = mouseY - this.bounds.y0();
 
-        var scroller = this.scrollView.scrollerFromTop(SCROLLBAR, SCROLLER_BOUNDS);
-        if (scroller.contains(windowMouseX, windowMouseY)) {
-            this.selectedScroller = true;
-            this.scrollerSelectY = windowMouseY - scroller.y0();
+            var scroller = this.scrollView.scrollerFromTop(SCROLLBAR, SCROLLER_BOUNDS);
+            if (scroller.contains(windowMouseX, windowMouseY) && this.mouseClickedScroller(windowMouseY, scroller)) {
+                return true;
+            }
+
+            int slotX = GRID.slotX(Mth.floor(windowMouseX));
+            int slotY = GRID.slotY(Mth.floor(windowMouseY));
+            if (GRID.contains(slotX, slotY) && this.mouseClickedSlot(slotX, slotY)) {
+                return true;
+            }
+
             return true;
         }
 
-        return this.isSelected(mouseX, mouseY);
+        return false;
     }
 
     public boolean mouseDragged(double mouseX, double mouseY) {
         if (this.selectedScroller) {
-            double windowMouseY = mouseY - this.bounds.y0();
-
-            int scrollerY = Mth.floor(windowMouseY - this.scrollerSelectY - SCROLLBAR_Y);
-            float scroll = this.scrollView.scrollerToScroll(scrollerY, SCROLLBAR);
-
-            this.scrollView.setScroll(scroll);
-            this.onScrollChanged();
+            return this.mouseDraggedScroller(mouseY);
         }
 
         return this.isSelected(mouseX, mouseY);
@@ -210,8 +224,7 @@ public final class SlotQueryWindow extends GuiComponent {
 
     public boolean mouseReleased(double mouseX, double mouseY) {
         if (this.selectedScroller) {
-            this.selectedScroller = false;
-            return true;
+            return this.mouseReleasedScroller();
         }
         return this.isSelected(mouseX, mouseY);
     }
@@ -219,6 +232,47 @@ public final class SlotQueryWindow extends GuiComponent {
     public boolean mouseScrolled(double amount) {
         this.scrollView.mouseScrolled(amount);
         this.onScrollChanged();
+        return true;
+    }
+
+    private boolean mouseClickedSlot(int slotX, int slotY) {
+        var queriedItem = this.slots.get(GRID.index(slotX, slotY));
+        if (queriedItem == null) {
+            return false;
+        }
+
+        var sourceSlot = this.slotSelector.selectMatching(queriedItem);
+        if (sourceSlot != null) {
+            var actions = new ScreenSlotActions()
+                    .swapStacks(sourceSlot, this.queriedSlot);
+            actions.execute(this.screen);
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean mouseClickedScroller(double windowMouseY, Bounds2i scroller) {
+        this.selectedScroller = true;
+        this.scrollerSelectY = windowMouseY - scroller.y0();
+        return true;
+    }
+
+    private boolean mouseDraggedScroller(double mouseY) {
+        double windowMouseY = mouseY - this.bounds.y0();
+
+        int scrollerY = Mth.floor(windowMouseY - this.scrollerSelectY - SCROLLBAR_Y);
+        float scroll = this.scrollView.scrollerToScroll(scrollerY, SCROLLBAR);
+
+        this.scrollView.setScroll(scroll);
+        this.onScrollChanged();
+
+        return true;
+    }
+
+    private boolean mouseReleasedScroller() {
+        this.selectedScroller = false;
         return true;
     }
 

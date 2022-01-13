@@ -1,4 +1,4 @@
-package dev.gegy.whats_that_slot.ui.draw;
+package dev.gegy.whats_that_slot.ui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.gegy.whats_that_slot.ui.Bounds2i;

@@ -1,7 +1,6 @@
 package dev.gegy.whats_that_slot.query;
 
 import com.google.common.collect.AbstractIterator;
-import com.google.common.collect.Iterators;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.world.item.CreativeModeTab;
