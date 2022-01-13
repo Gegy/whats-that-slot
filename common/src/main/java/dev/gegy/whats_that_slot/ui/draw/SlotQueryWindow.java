@@ -3,7 +3,7 @@ package dev.gegy.whats_that_slot.ui.draw;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.gegy.whats_that_slot.WhatsThatSlot;
-import dev.gegy.whats_that_slot.collection.ConcatList;
+import dev.gegy.whats_that_slot.query.QueriedItem;
 import dev.gegy.whats_that_slot.query.SlotQuery;
 import dev.gegy.whats_that_slot.ui.Bounds2i;
 import dev.gegy.whats_that_slot.ui.scroll.ScrollView;
@@ -11,6 +11,8 @@ import dev.gegy.whats_that_slot.ui.scroll.Scrollbar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.Slot;
@@ -26,6 +28,8 @@ public final class SlotQueryWindow extends GuiComponent {
 
     private static final int WIDTH = 117;
     private static final int HEIGHT = 102;
+
+    private static final int HIGHLIGHT_COLOR = 0xFF64AA32;
 
     private static final int SLOTS_X0 = 7;
     private static final int SLOTS_Y0 = 7;
@@ -63,7 +67,7 @@ public final class SlotQueryWindow extends GuiComponent {
     private double scrollerSelectY;
 
     public SlotQueryWindow(AbstractContainerScreen<?> screen, Slot slot, SlotQuery query) {
-        this.slots = new SlotGrid(GRID, ConcatList.of(query.inventoryItems(), query.globalItems()));
+        this.slots = new SlotGrid(GRID, query.items());
         this.scrollView = this.slots.createScrollView();
 
         var screenBounds = Bounds2i.ofScreen(screen);
@@ -95,7 +99,7 @@ public final class SlotQueryWindow extends GuiComponent {
             }
 
             if (!this.slots.isEmpty()) {
-                this.drawQueryItems();
+                this.drawQueryItems(matrices);
                 this.drawQueryTooltips(matrices, mouseX - this.bounds.x0(), mouseY - this.bounds.y0());
             }
         } finally {
@@ -119,7 +123,7 @@ public final class SlotQueryWindow extends GuiComponent {
         this.blit(matrices, scroller, SCROLLER_U, v);
     }
 
-    private void drawQueryItems() {
+    private void drawQueryItems(PoseStack matrices) {
         var itemRenderer = CLIENT.getItemRenderer();
         var player = CLIENT.player;
 
@@ -128,15 +132,24 @@ public final class SlotQueryWindow extends GuiComponent {
 
             GRID.forEach((index, slotX, slotY) -> {
                 var item = this.slots.get(index);
-                if (!item.isEmpty()) {
+                if (item != null) {
                     int screenX = GRID.screenX(slotX);
                     int screenY = GRID.screenY(slotY);
-                    itemRenderer.renderAndDecorateItem(player, item, screenX, screenY, 0);
+
+                    this.drawItemSlot(matrices, itemRenderer, player, item, screenX, screenY);
                 }
             });
         } finally {
             itemRenderer.blitOffset = 0.0F;
         }
+    }
+
+    private void drawItemSlot(PoseStack matrices, ItemRenderer itemRenderer, LocalPlayer player, QueriedItem item, int x, int y) {
+        if (item.highlighted()) {
+            this.fillGradient(matrices, x, y, x + 16, y + 16, HIGHLIGHT_COLOR, HIGHLIGHT_COLOR);
+        }
+
+        itemRenderer.renderAndDecorateItem(player, item.itemStack(), x, y, 0);
     }
 
     private void drawQueryTooltips(PoseStack matrices, int mouseX, int mouseY) {
@@ -153,8 +166,8 @@ public final class SlotQueryWindow extends GuiComponent {
         AbstractContainerScreen.renderSlotHighlight(matrices, screenX, screenY, this.getBlitOffset());
 
         var item = this.slots.get(GRID.index(slotX, slotY));
-        if (!item.isEmpty()) {
-            this.renderItemTooltip(matrices, mouseX, mouseY, item);
+        if (item != null) {
+            this.renderItemTooltip(matrices, mouseX, mouseY, item.itemStack());
         }
     }
 

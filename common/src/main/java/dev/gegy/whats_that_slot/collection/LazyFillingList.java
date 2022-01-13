@@ -18,8 +18,8 @@ public final class LazyFillingList<T> extends AbstractList<T> {
         this.size = size;
     }
 
-    public static <T> LazyFillingList<T> ofIterable(Iterable<T> source, int size) {
-        return new LazyFillingList<>(source.iterator(), size);
+    public static <T> LazyFillingList<T> ofIterator(Iterator<T> source, int size) {
+        return new LazyFillingList<>(source, size);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package dev.gegy.whats_that_slot.query;
 
+import com.google.common.collect.Iterators;
 import dev.gegy.whats_that_slot.WhatsThatSlot;
+import dev.gegy.whats_that_slot.collection.ConcatList;
 import dev.gegy.whats_that_slot.collection.LazyFillingList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.entity.player.Inventory;
@@ -127,9 +129,28 @@ public final class SlotQueryGenerator {
         }
 
         private SlotQuery buildResults() {
-            var inventoryItems = new ObjectArrayList<>(this.inventoryMatches);
-            var globalItems = LazyFillingList.ofIterable(this.globalItems.filter(this.globalFilter), this.matchCount);
-            return new SlotQuery(inventoryItems, globalItems);
+            return new SlotQuery(ConcatList.of(
+                    this.buildInventoryResults(),
+                    this.buildGlobalResults()
+            ));
+        }
+
+        private LazyFillingList<QueriedItem> buildGlobalResults() {
+            return LazyFillingList.ofIterator(
+                    Iterators.transform(
+                            Iterators.filter(this.globalItems.iterator(), this.globalFilter::test),
+                            QueriedItem::of
+                    ),
+                    this.matchCount
+            );
+        }
+
+        private ObjectArrayList<QueriedItem> buildInventoryResults() {
+            var inventoryItems = new ObjectArrayList<QueriedItem>(this.inventoryMatches.size());
+            for (var match : this.inventoryMatches) {
+                inventoryItems.add(QueriedItem.ofHighlighted(match));
+            }
+            return inventoryItems;
         }
     }
 

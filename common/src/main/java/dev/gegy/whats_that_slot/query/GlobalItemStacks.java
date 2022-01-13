@@ -1,7 +1,6 @@
 package dev.gegy.whats_that_slot.query;
 
 import com.google.common.collect.AbstractIterator;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
@@ -10,15 +9,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Iterator;
-import java.util.function.Predicate;
 
 public final class GlobalItemStacks implements Iterable<ItemStack> {
-    private int size = -1;
-
-    public Iterable<ItemStack> filter(Predicate<ItemStack> filter) {
-        return Iterables.filter(this, filter::test);
-    }
-
     @Override
     public Iterator<ItemStack> iterator() {
         var items = Registry.ITEM.iterator();
@@ -52,13 +44,5 @@ public final class GlobalItemStacks implements Iterable<ItemStack> {
                 return buffer.iterator();
             }
         };
-    }
-
-    public int size() {
-        var size = this.size;
-        if (size == -1) {
-            this.size = size = Iterators.size(this.iterator());
-        }
-        return size;
     }
 }

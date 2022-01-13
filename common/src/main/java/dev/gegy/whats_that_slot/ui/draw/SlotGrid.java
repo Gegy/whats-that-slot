@@ -1,18 +1,19 @@
 package dev.gegy.whats_that_slot.ui.draw;
 
+import dev.gegy.whats_that_slot.query.QueriedItem;
 import dev.gegy.whats_that_slot.ui.scroll.ScrollView;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.ItemStack;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public final class SlotGrid {
     private final SlotGridLayout layout;
-    private final List<ItemStack> items;
+    private final List<QueriedItem> items;
 
     private int scrollIndexOffset;
 
-    public SlotGrid(SlotGridLayout layout, List<ItemStack> items) {
+    public SlotGrid(SlotGridLayout layout, List<QueriedItem> items) {
         this.layout = layout;
         this.items = items;
     }
@@ -25,12 +26,13 @@ public final class SlotGrid {
         this.scrollIndexOffset = Mth.floor(scroll) * this.layout.countX();
     }
 
-    public ItemStack get(int index) {
+    @Nullable
+    public QueriedItem get(int index) {
         int listIndex = index + this.scrollIndexOffset;
         if (listIndex >= 0 && listIndex < this.items.size()) {
             return this.items.get(listIndex);
         } else {
-            return ItemStack.EMPTY;
+            return null;
         }
     }
 
