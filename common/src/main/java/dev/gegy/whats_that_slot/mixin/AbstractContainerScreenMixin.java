@@ -9,6 +9,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @Mixin(AbstractContainerScreen.class)
@@ -89,5 +91,11 @@ public class AbstractContainerScreenMixin implements SlotQueryingScreen {
     @Override
     public boolean whats_that_slot$mouseScrolled(double amount) {
         return this.queryController.mouseScrolled(amount);
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack whats_that_slot$getHoveredItemAt(double x, double y) {
+        return this.queryController.getHoveredItemAt(x, y);
     }
 }

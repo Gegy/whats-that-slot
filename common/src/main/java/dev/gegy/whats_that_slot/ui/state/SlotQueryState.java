@@ -3,6 +3,7 @@ package dev.gegy.whats_that_slot.ui.state;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,6 +32,11 @@ public interface SlotQueryState {
 
     default boolean mouseScrolled(double amount) {
         return false;
+    }
+
+    @Nonnull
+    default ItemStack getHoveredItemAt(double x, double y) {
+        return ItemStack.EMPTY;
     }
 
     default boolean isActive() {

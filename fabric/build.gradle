@@ -21,6 +21,10 @@ loom {
   }
 }
 
+repositories {
+  maven { url "https://maven.shedaniel.me" }
+}
+
 dependencies {
   implementation project(':common')
 
@@ -32,6 +36,9 @@ dependencies {
 
   modImplementation "net.fabricmc:fabric-loader:${loader_version}"
   modImplementation(include(fabricApi.module("fabric-resource-loader-v0", fabric_version)))
+
+  modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:$rei_version"
+  modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:$rei_version"
 
   modRuntimeOnly("supercoder79:databreaker:0.2.8") {
     exclude module: "fabric-loader"

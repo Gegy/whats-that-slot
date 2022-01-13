@@ -27,6 +27,15 @@ public final class SlotGrid {
     }
 
     @Nullable
+    public QueriedItem get(int x, int y) {
+        if (this.layout.contains(x, y)) {
+            return this.get(this.layout.index(x, y));
+        } else {
+            return null;
+        }
+    }
+
+    @Nullable
     public QueriedItem get(int index) {
         int listIndex = index + this.scrollIndexOffset;
         if (listIndex >= 0 && listIndex < this.items.size()) {

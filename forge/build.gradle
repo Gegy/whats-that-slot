@@ -70,10 +70,19 @@ minecraft {
 
 sourceSets.main.resources.srcDir "src/generated/resources"
 
+repositories {
+  maven { url "https://dvs1.progwml6.com/files/maven/" }
+  maven { url "https://modmaven.dev" }
+  maven { url "https://maven.shedaniel.me" }
+}
+
 dependencies {
   compileOnly project(":common")
 
   minecraft "net.minecraftforge:forge:$minecraft_version-$forge_version"
+
+  compileOnly fg.deobf("mezz.jei:jei-$minecraft_version:$jei_version:api")
+  runtimeOnly fg.deobf("mezz.jei:jei-$minecraft_version:$jei_version")
 
   annotationProcessor "org.spongepowered:mixin:0.8.3:processor"
 }

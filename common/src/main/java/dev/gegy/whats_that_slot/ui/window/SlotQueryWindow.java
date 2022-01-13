@@ -20,6 +20,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
+import javax.annotation.Nonnull;
+
 // TODO: we can group together stacks from the same item if they all apply
 public final class SlotQueryWindow extends GuiComponent {
     private static final Minecraft CLIENT = Minecraft.getInstance();
@@ -177,7 +179,7 @@ public final class SlotQueryWindow extends GuiComponent {
         int screenY = GRID.screenY(slotY);
         AbstractContainerScreen.renderSlotHighlight(matrices, screenX, screenY, this.getBlitOffset());
 
-        var item = this.slots.get(GRID.index(slotX, slotY));
+        var item = this.slots.get(slotX, slotY);
         if (item != null) {
             this.renderItemTooltip(matrices, mouseX, mouseY, item.itemStack());
         }
@@ -236,7 +238,7 @@ public final class SlotQueryWindow extends GuiComponent {
     }
 
     private boolean mouseClickedSlot(int slotX, int slotY) {
-        var queriedItem = this.slots.get(GRID.index(slotX, slotY));
+        var queriedItem = this.slots.get(slotX, slotY);
         if (queriedItem == null) {
             return false;
         }
@@ -278,6 +280,19 @@ public final class SlotQueryWindow extends GuiComponent {
 
     private void onScrollChanged() {
         this.slots.applyScroll(this.scrollView.scroll());
+    }
+
+    @Nonnull
+    public ItemStack getHoveredItemAt(double x, double y) {
+        int slotX = GRID.slotX(Mth.floor(x - this.bounds.x0()));
+        int slotY = GRID.slotY(Mth.floor(y - this.bounds.y0()));
+
+        var item = this.slots.get(slotX, slotY);
+        if (item != null) {
+            return item.itemStack();
+        }
+
+        return ItemStack.EMPTY;
     }
 
     @Override

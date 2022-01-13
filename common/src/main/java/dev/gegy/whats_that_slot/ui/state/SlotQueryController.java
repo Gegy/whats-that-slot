@@ -4,7 +4,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public final class SlotQueryController {
@@ -47,6 +49,11 @@ public final class SlotQueryController {
 
     public boolean mouseScrolled(double amount) {
         return this.state.mouseScrolled(amount);
+    }
+
+    @Nonnull
+    public ItemStack getHoveredItemAt(double x, double y) {
+        return this.state.getHoveredItemAt(x, y);
     }
 
     public boolean isActive() {
