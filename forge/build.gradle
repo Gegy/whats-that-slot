@@ -73,7 +73,6 @@ sourceSets.main.resources.srcDir "src/generated/resources"
 repositories {
   maven { url "https://dvs1.progwml6.com/files/maven/" }
   maven { url "https://modmaven.dev" }
-  maven { url "https://maven.shedaniel.me" }
 }
 
 dependencies {
