@@ -1,51 +1,63 @@
-subprojects {
-  apply plugin: 'java'
+plugins {
+  id 'java'
+  id 'fabric-loom' version '0.7-SNAPSHOT'
+}
 
-  group = maven_group
-  version = "$mod_version+$minecraft_version"
+group = maven_group
+version = "$mod_version+$minecraft_version"
+archivesBaseName = "$mod_name-fabric"
 
-  java {
-    toolchain.languageVersion = JavaLanguageVersion.of(17)
-    withSourcesJar()
-  }
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
-  repositories {
-    mavenCentral()
-    maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
-    maven { url "https://maven.gegy.dev/" }
-    maven { url "https://maven.parchmentmc.org/" }
-  }
+java {
+  withSourcesJar()
+}
 
-  dependencies {
-    implementation 'com.google.code.findbugs:jsr305:3.0.2'
-  }
-
-  jar {
-    manifest {
-      attributes([
-          'Specification-Title'     : mod_name,
-          'Specification-Vendor'    : "Gegy",
-          'Specification-Version'   : mod_version,
-          'Implementation-Title'    : mod_name,
-          'Implementation-Version'  : mod_version,
-          'Implementation-Vendor'   : "Gegy",
-          'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-          'Timestamp'               : System.currentTimeMillis(),
-          "MixinConfigs"            : "${mod_id}.mixins.json"
-      ])
+loom {
+  runs {
+    client {
+      client()
+      setConfigName "Fabric Client"
+      ideConfigGenerated true
+      runDir "run"
     }
-
-    from("LICENSE") {
-      rename { "${it}_${mod_name}" }
+    server {
+      server()
+      setConfigName "Fabric Server"
+      ideConfigGenerated true
+      runDir "run"
     }
   }
+}
 
-  tasks.withType(JavaCompile).configureEach {
-    it.options.encoding = 'UTF-8'
-    it.options.release = 17
-  }
+repositories {
+  mavenCentral()
+}
 
-  tasks.withType(GenerateModuleMetadata) {
-    enabled = false
+dependencies {
+  minecraft "com.mojang:minecraft:$minecraft_version"
+  mappings loom.officialMojangMappings()
+
+  modImplementation "net.fabricmc:fabric-loader:${loader_version}"
+  modImplementation(include(fabricApi.module("fabric-resource-loader-v0", fabric_version)))
+
+  implementation "com.google.code.findbugs:jsr305:3.0.2"
+}
+
+processResources {
+  inputs.property "version", project.version
+
+  filesMatching("fabric.mod.json") {
+    expand "version": project.version
   }
+}
+
+jar {
+  from("LICENSE") {
+    rename { "${it}_${mod_name}" }
+  }
+}
+
+tasks.withType(JavaCompile).configureEach {
+  it.options.encoding = "UTF-8"
 }
