@@ -1,8 +1,16 @@
 package dev.gegy.whats_that_slot.query;
 
 import dev.gegy.whats_that_slot.WhatsThatSlot;
+import dev.gegy.whats_that_slot.mixin.AbstractContainerScreenAccess;
+import dev.gegy.whats_that_slot.mixin.AbstractFurnaceMenuAccess;
+import dev.gegy.whats_that_slot.query.recipe.RecipeItemResults;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.world.inventory.FurnaceResultSlot;
+import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
@@ -54,5 +62,24 @@ public final class SlotMetadata {
         } catch (ReflectiveOperationException e) {
             return false;
         }
+    }
+
+    // TODO: expose api?
+    @Nullable
+    public static Iterable<ItemStack> getCustomItems(Minecraft client, AbstractContainerScreen<?> screen, Slot slot) {
+        if (client.level != null) {
+            var recipeManager = client.level.getRecipeManager();
+            if (slot instanceof ResultSlot) {
+                return new RecipeItemResults(recipeManager, RecipeType.CRAFTING);
+            } else if (slot instanceof FurnaceResultSlot) {
+                var menu = ((AbstractContainerScreenAccess) screen).getMenu();
+                if (menu instanceof AbstractFurnaceMenuAccess furnace) {
+                    var recipeType = furnace.getRecipeType();
+                    return new RecipeItemResults(recipeManager, recipeType);
+                }
+            }
+        }
+
+        return null;
     }
 }

@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import javax.annotation.Nullable;
 import java.time.Duration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
@@ -20,8 +21,18 @@ public final class SlotQueryGenerator {
     private State state;
     private SlotQuery results;
 
-    public SlotQueryGenerator(AbstractContainerScreen<?> screen, Predicate<ItemStack> filter) {
-        this.state = new MatchingInventory(screen, filter);
+    private SlotQueryGenerator(State state) {
+        this.state = state;
+    }
+
+    public static SlotQueryGenerator of(AbstractContainerScreen<?> screen, Predicate<ItemStack> filter) {
+        var state = new MatchingInventory(screen, filter);
+        return new SlotQueryGenerator(state);
+    }
+
+    public static SlotQueryGenerator ofCustom(Iterable<ItemStack> items) {
+        var state = new MatchingCustom(items);
+        return new SlotQueryGenerator(state);
     }
 
     @Nullable
@@ -121,7 +132,7 @@ public final class SlotQueryGenerator {
             }
 
             if (!iterator.hasNext()) {
-                SlotQuery results = this.buildResults();
+                var results = this.buildResults();
                 return new Ready(results);
             } else {
                 return this;
@@ -135,7 +146,7 @@ public final class SlotQueryGenerator {
             ));
         }
 
-        private LazyFillingList<QueriedItem> buildGlobalResults() {
+        private List<QueriedItem> buildGlobalResults() {
             return LazyFillingList.ofIterator(
                     Iterators.transform(
                             Iterators.filter(this.globalItems.iterator(), this.globalFilter::test),
@@ -145,12 +156,45 @@ public final class SlotQueryGenerator {
             );
         }
 
-        private ObjectArrayList<QueriedItem> buildInventoryResults() {
+        private List<QueriedItem> buildInventoryResults() {
             var inventoryItems = new ObjectArrayList<QueriedItem>(this.inventoryMatches.size());
             for (var match : this.inventoryMatches) {
                 inventoryItems.add(QueriedItem.ofHighlighted(match));
             }
             return inventoryItems;
+        }
+    }
+
+    private static final class MatchingCustom implements State {
+        private final Iterable<ItemStack> items;
+        private final Iterator<ItemStack> itemIterator;
+
+        private int itemCount;
+
+        private MatchingCustom(Iterable<ItemStack> items) {
+            this.items = items;
+            this.itemIterator = items.iterator();
+        }
+
+        @Override
+        public State advance(BooleanSupplier shouldContinue) {
+            var iterator = this.itemIterator;
+            while (shouldContinue.getAsBoolean() && iterator.hasNext()) {
+                iterator.next();
+                this.itemCount++;
+            }
+
+            if (!iterator.hasNext()) {
+                var results = this.buildResults();
+                return new Ready(results);
+            } else {
+                return this;
+            }
+        }
+
+        private SlotQuery buildResults() {
+            var items = Iterators.transform(this.items.iterator(), QueriedItem::of);
+            return new SlotQuery(LazyFillingList.ofIterator(items, this.itemCount));
         }
     }
 
