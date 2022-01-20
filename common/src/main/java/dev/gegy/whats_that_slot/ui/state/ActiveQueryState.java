@@ -2,7 +2,7 @@ package dev.gegy.whats_that_slot.ui.state;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.gegy.whats_that_slot.query.SlotQuery;
-import dev.gegy.whats_that_slot.ui.window.SlotQueryWindow;
+import dev.gegy.whats_that_slot.ui.window.SlotQueryPopup;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.inventory.Slot;
@@ -14,14 +14,14 @@ import javax.annotation.Nullable;
 public final class ActiveQueryState implements SlotQueryState {
     private final AbstractContainerScreen<?> screen;
     private final Slot slot;
-    private final SlotQueryWindow window;
+    private final SlotQueryPopup window;
 
     private boolean windowSelected;
 
     public ActiveQueryState(AbstractContainerScreen<?> screen, Slot slot, SlotQuery query) {
         this.screen = screen;
         this.slot = slot;
-        this.window = new SlotQueryWindow(screen, slot, query);
+        this.window = new SlotQueryPopup(screen, slot, query);
     }
 
     @Override
