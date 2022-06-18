@@ -1,6 +1,6 @@
 # What's That Slot
 This mod is a simple utility that allows you to query which items can be placed in a specific slot by holding down **Left-Alt**.
-You can also find this mod on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/whats-that-slot/).
+You can also find this mod on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/whats-that-slot/) or [Modrinth](https://modrinth.com/mod/whats-that-slot).
 
 This is particularly useful in modded environments where it may not be clear what items can be placed in a modded
 GUI.
