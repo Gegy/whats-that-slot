@@ -1,26 +1,14 @@
-buildscript {
-  repositories {
-    maven { url "https://maven.minecraftforge.net" }
-    maven { url "https://maven.parchmentmc.org" }
-    maven { url 'https://repo.spongepowered.org/maven' }
-    mavenCentral()
-  }
-  dependencies {
-    classpath group: "net.minecraftforge.gradle", name: "ForgeGradle", version: "5.1.+", changing: true
-    classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
-    classpath 'org.parchmentmc:librarian:1.+'
-  }
+plugins {
+  id 'java'
+  id 'net.minecraftforge.gradle' version '5.1.+'
+  id 'org.spongepowered.mixin' version '0.7+'
+  id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
-
-apply plugin: "java"
-apply plugin: "net.minecraftforge.gradle"
-apply plugin: 'org.spongepowered.mixin'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
 archivesBaseName = "$mod_name-forge"
 
 minecraft {
-  mappings channel: "parchment", version: "$parchment_version-$minecraft_version"
+  mappings channel: "parchment", version: "$parchment_version-$parchment_minecraft_version"
 
   runs {
     client {
@@ -80,10 +68,12 @@ dependencies {
 
   minecraft "net.minecraftforge:forge:$minecraft_version-$forge_version"
 
-  compileOnly fg.deobf("mezz.jei:jei-$minecraft_version:$jei_version:api")
-  runtimeOnly fg.deobf("mezz.jei:jei-$minecraft_version:$jei_version")
+  compileOnly fg.deobf("mezz.jei:jei-$minecraft_version-common-api:$jei_version")
+  runtimeOnly fg.deobf("mezz.jei:jei-$minecraft_version-forge:$jei_version")
 
-  annotationProcessor "org.spongepowered:mixin:0.8.3:processor"
+  if (System.getProperty("idea.sync.active") != "true") {
+    annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
+  }
 }
 
 mixin {
@@ -100,12 +90,3 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 jar.finalizedBy("reobfJar")
-
-// fix for mixin annotation processing handling incorrectly in IDEA gradle sync
-if (System.getProperty("idea.sync.active") == "true") {
-  afterEvaluate {
-    tasks.withType(JavaCompile).all {
-      it.options.annotationProcessorPath = files()
-    }
-  }
-}

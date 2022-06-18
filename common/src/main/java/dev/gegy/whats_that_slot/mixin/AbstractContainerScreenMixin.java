@@ -46,7 +46,7 @@ public class AbstractContainerScreenMixin implements SlotQueryingScreen {
         }
     }
 
-    @Inject(method = "tick()V", at = @At("HEAD"))
+    @Inject(method = "containerTick()V", at = @At("HEAD"))
     private void tickQuery(CallbackInfo ci) {
         var window = Minecraft.getInstance().getWindow();
         var carriedItem = this.menu.getCarried();
