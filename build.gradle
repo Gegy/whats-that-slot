@@ -2,7 +2,7 @@ subprojects {
   apply plugin: 'java'
 
   group = maven_group
-  version = "$mod_version+$minecraft_version"
+  version = "$mod_version+$minecraft_version" + (release ? "" : "-beta")
 
   java {
     toolchain.languageVersion = JavaLanguageVersion.of(17)
