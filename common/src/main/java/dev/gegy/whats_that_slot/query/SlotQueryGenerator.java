@@ -1,15 +1,16 @@
 package dev.gegy.whats_that_slot.query;
 
 import com.google.common.collect.Iterators;
-import dev.gegy.whats_that_slot.WhatsThatSlot;
 import dev.gegy.whats_that_slot.collection.ConcatList;
 import dev.gegy.whats_that_slot.collection.LazyFillingList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 import java.time.Duration;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -111,7 +112,7 @@ public final class SlotQueryGenerator {
         private final Predicate<ItemStack> globalFilter;
         private final Set<ItemStack> inventoryMatches;
 
-        private final GlobalItemStacks globalItems = WhatsThatSlot.GLOBAL_ITEMS;
+        private final Collection<ItemStack> globalItems = GlobalItemStacks.get(Minecraft.getInstance());
         private final Iterator<ItemStack> globalItemIterator = this.globalItems.iterator();
 
         private int matchCount;

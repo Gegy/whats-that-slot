@@ -1,3 +1,4 @@
+/*
 package dev.gegy.whats_that_slot.integration.jei;
 
 import dev.gegy.whats_that_slot.WhatsThatSlot;
@@ -34,3 +35,4 @@ public final class WtsJeiPlugin implements IModPlugin {
         });
     }
 }
+*/
