@@ -14,13 +14,13 @@ Utility that highlights which items can be placed in an item slot while holding 
 [[dependencies.whats_that_slot]]
 modId = "forge"
 mandatory = true
-versionRange = "[40,)"
+versionRange = "[45,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.whats_that_slot]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.19.3,)"
+versionRange = "[1.19.4,)"
 ordering = "NONE"
 side = "BOTH"

@@ -68,14 +68,15 @@ public final class SlotMetadata {
     @Nullable
     public static Iterable<ItemStack> getCustomItems(Minecraft client, AbstractContainerScreen<?> screen, Slot slot) {
         if (client.level != null) {
+            var registryAccess = client.level.registryAccess();
             var recipeManager = client.level.getRecipeManager();
             if (slot instanceof ResultSlot) {
-                return new RecipeItemResults(recipeManager, RecipeType.CRAFTING);
+                return new RecipeItemResults(registryAccess, recipeManager, RecipeType.CRAFTING);
             } else if (slot instanceof FurnaceResultSlot) {
                 var menu = ((AbstractContainerScreenAccess) screen).getMenu();
                 if (menu instanceof AbstractFurnaceMenuAccess furnace) {
                     var recipeType = furnace.getRecipeType();
-                    return new RecipeItemResults(recipeManager, recipeType);
+                    return new RecipeItemResults(registryAccess, recipeManager, recipeType);
                 }
             }
         }

@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackLinkedSet;
 
 import javax.annotation.Nullable;
 import java.time.Duration;
@@ -73,7 +74,7 @@ public final class SlotQueryGenerator {
         private final Predicate<ItemStack> filter;
         private final Iterator<ItemStack> inventoryIterator;
 
-        private final Set<ItemStack> inventoryMatches = new ItemStackLinkedSet();
+        private final Set<ItemStack> inventoryMatches = ItemStackLinkedSet.createTypeAndTagSet();
 
         private MatchingInventory(AbstractContainerScreen<?> screen, Predicate<ItemStack> filter) {
             this.filter = filter;

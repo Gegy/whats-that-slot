@@ -30,8 +30,6 @@ public final class SlotQueryItems extends GuiComponent {
         this.bounds = bounds;
         this.grid = grid;
         this.items = items;
-
-        this.setBlitOffset(SlotQueryPopup.BLIT_OFFSET);
     }
 
     public void applyScroll(float scroll) {
@@ -42,28 +40,27 @@ public final class SlotQueryItems extends GuiComponent {
         var itemRenderer = CLIENT.getItemRenderer();
         var player = CLIENT.player;
 
-        try {
-            itemRenderer.blitOffset = this.getBlitOffset();
+        matrices.pushPose();
+        matrices.translate(0.0, 0.0, SlotQueryPopup.BLIT_OFFSET);
 
-            this.grid.forEach((index, slotX, slotY) -> {
-                var item = this.getItemInSlot(index);
-                if (item != null) {
-                    int screenX = this.screenX(slotX);
-                    int screenY = this.screenY(slotY);
-                    this.drawItemSlot(matrices, itemRenderer, player, item, screenX, screenY);
-                }
-            });
-        } finally {
-            itemRenderer.blitOffset = 0.0F;
-        }
+        this.grid.forEach((index, slotX, slotY) -> {
+            var item = this.getItemInSlot(index);
+            if (item != null) {
+                int screenX = this.screenX(slotX);
+                int screenY = this.screenY(slotY);
+                this.drawItemSlot(matrices, itemRenderer, player, item, screenX, screenY);
+            }
+        });
+
+        matrices.popPose();
     }
 
     private void drawItemSlot(PoseStack matrices, ItemRenderer itemRenderer, LocalPlayer player, QueriedItem item, int x, int y) {
         if (item.highlighted()) {
-            this.fillGradient(matrices, x, y, x + 16, y + 16, HIGHLIGHT_COLOR, HIGHLIGHT_COLOR);
+            fillGradient(matrices, x, y, x + 16, y + 16, HIGHLIGHT_COLOR, HIGHLIGHT_COLOR);
         }
 
-        itemRenderer.renderAndDecorateItem(player, item.itemStack(), x, y, 0);
+        itemRenderer.renderAndDecorateItem(matrices, player, item.itemStack(), x, y, 0);
     }
 
     public void drawTooltips(PoseStack matrices, int mouseX, int mouseY) {
@@ -77,7 +74,7 @@ public final class SlotQueryItems extends GuiComponent {
     private void drawSlotTooltip(PoseStack matrices, int mouseX, int mouseY, int slotX, int slotY) {
         int screenX = this.screenX(slotX);
         int screenY = this.screenY(slotY);
-        AbstractContainerScreen.renderSlotHighlight(matrices, screenX, screenY, this.getBlitOffset());
+        AbstractContainerScreen.renderSlotHighlight(matrices, screenX, screenY, SlotQueryPopup.BLIT_OFFSET);
 
         var item = this.getItemInSlot(slotX, slotY);
         if (item != null) {

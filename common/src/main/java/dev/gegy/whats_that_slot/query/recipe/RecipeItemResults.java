@@ -3,18 +3,17 @@ package dev.gegy.whats_that_slot.query.recipe;
 import com.google.common.collect.AbstractIterator;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 
-public record RecipeItemResults(RecipeManager recipes, RecipeType<?> recipeType) implements Iterable<ItemStack> {
+public record RecipeItemResults(RegistryAccess registryAccess, RecipeManager recipes, RecipeType<?> recipeType) implements Iterable<ItemStack> {
     @Override
     public Iterator<ItemStack> iterator() {
         var recipeIterator = this.recipes.getRecipes().iterator();
@@ -47,25 +46,13 @@ public record RecipeItemResults(RecipeManager recipes, RecipeType<?> recipeType)
                         continue;
                     }
 
-                    var item = this.getRecipeResult(recipe);
+                    var item = recipe.getResultItem(registryAccess).copyWithCount(1);
                     if (this.encounteredItems.add(item)) {
                         return item;
                     }
                 }
 
                 return this.endOfData();
-            }
-
-            @Nonnull
-            private ItemStack getRecipeResult(Recipe<?> recipe) {
-                var item = recipe.getResultItem();
-                item = item.copy();
-
-                if (item.getCount() > 1) {
-                    item.setCount(1);
-                }
-
-                return item;
             }
         };
     }

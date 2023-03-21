@@ -13,7 +13,7 @@
   "mixins": ["whats_that_slot.mixins.json"],
   "depends": {
     "fabricloader": ">=0.12",
-    "minecraft": ">=1.19.3",
+    "minecraft": ">=1.19.4",
     "java": ">=17"
   }
 }

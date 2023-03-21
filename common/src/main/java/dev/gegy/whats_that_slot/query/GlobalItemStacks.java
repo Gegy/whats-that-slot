@@ -18,7 +18,7 @@ public final class GlobalItemStacks {
         }
 
         var hasPermissions = player.canUseGameMasterBlocks() && minecraft.options.operatorItemsTab().get();
-        CreativeModeTabs.tryRebuildTabContents(player.level.enabledFeatures(), hasPermissions);
+        CreativeModeTabs.tryRebuildTabContents(player.level.enabledFeatures(), hasPermissions, player.level.registryAccess());
 
         return CreativeModeTabs.searchTab().getDisplayItems();
     }

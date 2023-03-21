@@ -39,8 +39,6 @@ public final class StaticSlotQueryWindow extends GuiComponent implements SlotQue
 
         var slotsBounds = grid.screenBounds(SLOTS_X0, SLOTS_Y0);
         this.items = new SlotQueryItems(slotsBounds, grid, query.items());
-
-        this.setBlitOffset(SlotQueryPopup.BLIT_OFFSET);
     }
 
     @Override
@@ -54,13 +52,13 @@ public final class StaticSlotQueryWindow extends GuiComponent implements SlotQue
     }
 
     private void drawBackground(PoseStack matrices) {
-        this.blit(matrices, 0, 0, 0, 0, WIDTH, BORDER);
+        blit(matrices, 0, 0, SlotQueryPopup.BLIT_OFFSET, 0, 0, WIDTH, BORDER, TEXTURE_HEIGHT, TEXTURE_WIDTH);
 
         for (int i = 0; i < this.grid.countY(); i++) {
-            this.blit(matrices, 0, BORDER + i * SLOT_SIZE, 0, 6, WIDTH, SLOT_SIZE);
+            blit(matrices, 0, BORDER + i * SLOT_SIZE, SlotQueryPopup.BLIT_OFFSET, 0, 6, WIDTH, SLOT_SIZE, TEXTURE_HEIGHT, TEXTURE_WIDTH);
         }
 
-        this.blit(matrices, 0, BORDER + this.grid.countY() * SLOT_SIZE, 0, 24, WIDTH, BORDER);
+        blit(matrices, 0, BORDER + this.grid.countY() * SLOT_SIZE, SlotQueryPopup.BLIT_OFFSET, 0, 24, WIDTH, BORDER, TEXTURE_HEIGHT, TEXTURE_WIDTH);
     }
 
     @Override
@@ -82,10 +80,5 @@ public final class StaticSlotQueryWindow extends GuiComponent implements SlotQue
     @Override
     public ItemStack getHoveredItemAt(double x, double y) {
         return this.items.getHoveredItemAt(x, y);
-    }
-
-    @Override
-    public void blit(PoseStack matrices, int x, int y, int u, int v, int width, int height) {
-        blit(matrices, x, y, this.getBlitOffset(), u, v, width, height, TEXTURE_HEIGHT, TEXTURE_WIDTH);
     }
 }

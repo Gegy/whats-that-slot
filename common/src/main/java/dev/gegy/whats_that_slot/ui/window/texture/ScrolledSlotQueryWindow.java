@@ -61,8 +61,6 @@ public final class ScrolledSlotQueryWindow extends GuiComponent implements SlotQ
                 SCROLLBAR_X, SCROLLBAR_Y,
                 SCROLLER_WIDTH, SCROLLER_HEIGHT
         );
-
-        this.setBlitOffset(SlotQueryPopup.BLIT_OFFSET);
     }
 
     @Override
@@ -77,7 +75,7 @@ public final class ScrolledSlotQueryWindow extends GuiComponent implements SlotQ
     }
 
     private void drawBackground(PoseStack matrices) {
-        this.blit(matrices, 0, 0, 0, 0, WIDTH, HEIGHT);
+        blit(matrices, 0, 0, SlotQueryPopup.BLIT_OFFSET, 0, 0, WIDTH, HEIGHT, TEXTURE_HEIGHT, TEXTURE_WIDTH);
     }
 
     private void drawScroller(PoseStack matrices) {
@@ -154,12 +152,7 @@ public final class ScrolledSlotQueryWindow extends GuiComponent implements SlotQ
         return this.items.getHoveredItemAt(x, y);
     }
 
-    @Override
-    public void blit(PoseStack matrices, int x, int y, int u, int v, int width, int height) {
-        blit(matrices, x, y, this.getBlitOffset(), u, v, width, height, TEXTURE_HEIGHT, TEXTURE_WIDTH);
-    }
-
     private void blit(PoseStack matrices, Bounds2i bounds, int u, int v) {
-        this.blit(matrices, bounds.x0(), bounds.y0(), u, v, bounds.width(), bounds.height());
+        blit(matrices, bounds.x0(), bounds.y0(), SlotQueryPopup.BLIT_OFFSET, u, v, bounds.width(), bounds.height(), TEXTURE_HEIGHT, TEXTURE_WIDTH);
     }
 }

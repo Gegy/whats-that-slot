@@ -1,6 +1,5 @@
 package dev.gegy.whats_that_slot.ui.window;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.gegy.whats_that_slot.query.SlotQuery;
 import dev.gegy.whats_that_slot.ui.Bounds2i;
@@ -32,8 +31,6 @@ public final class SlotQueryPopup extends GuiComponent {
 
         this.window = this.createWindow(actions, query);
         this.bounds = SlotQueryWindow.findPopupBounds(screen, this.window.bounds(), queriedSlot);
-
-        this.setBlitOffset(BLIT_OFFSET);
     }
 
     private SlotQueryWindow createWindow(SlotQueryActions actions, SlotQuery query) {
@@ -49,18 +46,11 @@ public final class SlotQueryPopup extends GuiComponent {
     }
 
     public void draw(PoseStack matrices, int mouseX, int mouseY) {
-        var modelViewMatrices = RenderSystem.getModelViewStack();
+        matrices.pushPose();
+        matrices.translate(this.bounds.x0(), this.bounds.y0(), BLIT_OFFSET);
 
-        try {
-            modelViewMatrices.pushPose();
-            modelViewMatrices.translate(this.bounds.x0(), this.bounds.y0(), this.getBlitOffset());
-            RenderSystem.applyModelViewMatrix();
-
-            this.window.draw(matrices, mouseX - this.bounds.x0(), mouseY - this.bounds.y0());
-        } finally {
-            modelViewMatrices.popPose();
-            RenderSystem.applyModelViewMatrix();
-        }
+        this.window.draw(matrices, mouseX - this.bounds.x0(), mouseY - this.bounds.y0());
+        matrices.popPose();
     }
 
     public boolean isSelected(double mouseX, double mouseY) {
