@@ -1,21 +1,19 @@
 package dev.gegy.whats_that_slot.ui.window.texture;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.gegy.whats_that_slot.WhatsThatSlot;
 import dev.gegy.whats_that_slot.query.SlotQuery;
 import dev.gegy.whats_that_slot.ui.Bounds2i;
+import dev.gegy.whats_that_slot.ui.HoveredItem;
 import dev.gegy.whats_that_slot.ui.window.SlotGridLayout;
 import dev.gegy.whats_that_slot.ui.window.SlotQueryActions;
 import dev.gegy.whats_that_slot.ui.window.SlotQueryItems;
 import dev.gegy.whats_that_slot.ui.window.SlotQueryPopup;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-public final class StaticSlotQueryWindow extends GuiComponent implements SlotQueryWindow {
+public final class StaticSlotQueryWindow implements SlotQueryWindow {
     private static final ResourceLocation TEXTURE = new ResourceLocation(WhatsThatSlot.ID, "textures/gui/static_window.png");
 
     private static final int TEXTURE_WIDTH = 128;
@@ -42,23 +40,21 @@ public final class StaticSlotQueryWindow extends GuiComponent implements SlotQue
     }
 
     @Override
-    public void draw(PoseStack matrices, int mouseX, int mouseY) {
-        RenderSystem.setShaderTexture(0, TEXTURE);
+    public void draw(GuiGraphics graphics, int mouseX, int mouseY) {
+        this.drawBackground(graphics);
 
-        this.drawBackground(matrices);
-
-        this.items.drawItems(matrices);
-        this.items.drawTooltips(matrices, mouseX, mouseY);
+        this.items.drawItems(graphics);
+        this.items.drawTooltips(graphics, mouseX, mouseY);
     }
 
-    private void drawBackground(PoseStack matrices) {
-        blit(matrices, 0, 0, SlotQueryPopup.BLIT_OFFSET, 0, 0, WIDTH, BORDER, TEXTURE_HEIGHT, TEXTURE_WIDTH);
+    private void drawBackground(GuiGraphics graphics) {
+        graphics.blit(TEXTURE, 0, 0, SlotQueryPopup.BLIT_OFFSET, 0, 0, WIDTH, BORDER, TEXTURE_HEIGHT, TEXTURE_WIDTH);
 
         for (int i = 0; i < this.grid.countY(); i++) {
-            blit(matrices, 0, BORDER + i * SLOT_SIZE, SlotQueryPopup.BLIT_OFFSET, 0, 6, WIDTH, SLOT_SIZE, TEXTURE_HEIGHT, TEXTURE_WIDTH);
+            graphics.blit(TEXTURE, 0, BORDER + i * SLOT_SIZE, SlotQueryPopup.BLIT_OFFSET, 0, 6, WIDTH, SLOT_SIZE, TEXTURE_HEIGHT, TEXTURE_WIDTH);
         }
 
-        blit(matrices, 0, BORDER + this.grid.countY() * SLOT_SIZE, SlotQueryPopup.BLIT_OFFSET, 0, 24, WIDTH, BORDER, TEXTURE_HEIGHT, TEXTURE_WIDTH);
+        graphics.blit(TEXTURE, 0, BORDER + this.grid.countY() * SLOT_SIZE, SlotQueryPopup.BLIT_OFFSET, 0, 24, WIDTH, BORDER, TEXTURE_HEIGHT, TEXTURE_WIDTH);
     }
 
     @Override
@@ -76,9 +72,9 @@ public final class StaticSlotQueryWindow extends GuiComponent implements SlotQue
         }
     }
 
-    @Nonnull
+    @Nullable
     @Override
-    public ItemStack getHoveredItemAt(double x, double y) {
+    public HoveredItem getHoveredItemAt(double x, double y) {
         return this.items.getHoveredItemAt(x, y);
     }
 }

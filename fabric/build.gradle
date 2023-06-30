@@ -2,7 +2,9 @@ plugins {
   id 'fabric-loom' version '1.0.+'
 }
 
-archivesBaseName = "$mod_name-fabric"
+base {
+  archivesName = "$mod_name-fabric"
+}
 
 loom {
   runs {
@@ -38,7 +40,7 @@ dependencies {
   modImplementation(include(fabricApi.module("fabric-resource-loader-v0", fabric_version)))
 
   modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:$rei_version"
-  modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:$rei_version"
+//  modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:$rei_version"
 }
 
 processResources {

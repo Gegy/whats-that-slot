@@ -1,9 +1,9 @@
 package dev.gegy.whats_that_slot.ui.state;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import dev.gegy.whats_that_slot.ui.HoveredItem;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -12,7 +12,7 @@ public interface SlotQueryState {
     @Nonnull
     SlotQueryState tick(@Nullable Slot focusedSlot, boolean requestingQuery);
 
-    void draw(PoseStack matrices, int mouseX, int mouseY, float delta);
+    void draw(GuiGraphics graphics, int mouseX, int mouseY, float delta);
 
     default InteractionResult isSlotSelected(Slot slot, double mouseX, double mouseY) {
         return InteractionResult.PASS;
@@ -34,9 +34,9 @@ public interface SlotQueryState {
         return false;
     }
 
-    @Nonnull
-    default ItemStack getHoveredItemAt(double x, double y) {
-        return ItemStack.EMPTY;
+    @Nullable
+    default HoveredItem getHoveredItemAt(double x, double y) {
+        return null;
     }
 
     default boolean isActive() {

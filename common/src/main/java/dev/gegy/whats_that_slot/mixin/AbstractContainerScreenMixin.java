@@ -1,15 +1,15 @@
 package dev.gegy.whats_that_slot.mixin;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import dev.gegy.whats_that_slot.ui.HoveredItem;
 import dev.gegy.whats_that_slot.ui.SlotQueryInput;
 import dev.gegy.whats_that_slot.ui.SlotQueryingScreen;
 import dev.gegy.whats_that_slot.ui.state.SlotQueryController;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -19,7 +19,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @Mixin(AbstractContainerScreen.class)
@@ -38,8 +37,8 @@ public class AbstractContainerScreenMixin implements SlotQueryingScreen {
         this.querySlot = null;
     }
 
-    @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;IIF)V", at = @At("RETURN"))
-    private void captureAndClearFocusedSlot(PoseStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    @Inject(method = "render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V", at = @At("RETURN"))
+    private void captureAndClearFocusedSlot(GuiGraphics graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         this.querySlot = this.hoveredSlot;
         if (this.queryController.isActive()) {
             this.hoveredSlot = null;
@@ -53,10 +52,10 @@ public class AbstractContainerScreenMixin implements SlotQueryingScreen {
         this.queryController.tick(this.querySlot, SlotQueryInput.isRequestingQuery(window) && carriedItem.isEmpty());
     }
 
-    @Inject(method = "renderTooltip(Lcom/mojang/blaze3d/vertex/PoseStack;II)V", at = @At("TAIL"))
-    private void drawQueryDisplay(PoseStack matrices, int mouseX, int mouseY, CallbackInfo ci) {
+    @Inject(method = "renderTooltip(Lnet/minecraft/client/gui/GuiGraphics;II)V", at = @At("HEAD"))
+    private void drawQueryDisplay(GuiGraphics graphics, int mouseX, int mouseY, CallbackInfo ci) {
         float delta = Minecraft.getInstance().getDeltaFrameTime();
-        this.queryController.draw(matrices, mouseX, mouseY, delta);
+        this.queryController.draw(graphics, mouseX, mouseY, delta);
     }
 
     @Inject(method = "isHovering(Lnet/minecraft/world/inventory/Slot;DD)Z", at = @At("HEAD"), cancellable = true)
@@ -93,9 +92,9 @@ public class AbstractContainerScreenMixin implements SlotQueryingScreen {
         return this.queryController.mouseScrolled(amount);
     }
 
-    @Nonnull
+    @Nullable
     @Override
-    public ItemStack whats_that_slot$getHoveredItemAt(double x, double y) {
+    public HoveredItem whats_that_slot$getHoveredItemAt(double x, double y) {
         return this.queryController.getHoveredItemAt(x, y);
     }
 }

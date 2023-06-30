@@ -12,8 +12,8 @@ public final class WtsReiClientPlugin implements REIClientPlugin {
         registry.registerFocusedStack((screen, mouse) -> {
             if (screen instanceof SlotQueryingScreen queryingScreen) {
                 var item = queryingScreen.whats_that_slot$getHoveredItemAt(mouse.x, mouse.y);
-                if (!item.isEmpty()) {
-                    return CompoundEventResult.interruptTrue(EntryStacks.of(item));
+                if (item != null) {
+                    return CompoundEventResult.interruptTrue(EntryStacks.of(item.stack()));
                 }
             }
             return CompoundEventResult.pass();

@@ -1,12 +1,11 @@
 package dev.gegy.whats_that_slot.ui.state;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import dev.gegy.whats_that_slot.ui.HoveredItem;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public final class SlotQueryController {
@@ -27,8 +26,8 @@ public final class SlotQueryController {
         this.state = this.state.tick(hoveredSlot, requestingQuery);
     }
 
-    public void draw(PoseStack matrices, int mouseX, int mouseY, float delta) {
-        this.state.draw(matrices, mouseX, mouseY, delta);
+    public void draw(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        this.state.draw(graphics, mouseX, mouseY, delta);
     }
 
     public InteractionResult isSlotSelected(Slot slot, double mouseX, double mouseY) {
@@ -51,8 +50,8 @@ public final class SlotQueryController {
         return this.state.mouseScrolled(amount);
     }
 
-    @Nonnull
-    public ItemStack getHoveredItemAt(double x, double y) {
+    @Nullable
+    public HoveredItem getHoveredItemAt(double x, double y) {
         return this.state.getHoveredItemAt(x, y);
     }
 

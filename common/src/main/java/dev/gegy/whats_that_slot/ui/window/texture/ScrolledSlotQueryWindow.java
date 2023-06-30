@@ -1,24 +1,23 @@
 package dev.gegy.whats_that_slot.ui.window.texture;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.gegy.whats_that_slot.WhatsThatSlot;
 import dev.gegy.whats_that_slot.query.SlotQuery;
 import dev.gegy.whats_that_slot.ui.Bounds2i;
+import dev.gegy.whats_that_slot.ui.HoveredItem;
 import dev.gegy.whats_that_slot.ui.scroll.ScrollView;
 import dev.gegy.whats_that_slot.ui.scroll.Scrollbar;
 import dev.gegy.whats_that_slot.ui.window.SlotGridLayout;
 import dev.gegy.whats_that_slot.ui.window.SlotQueryActions;
 import dev.gegy.whats_that_slot.ui.window.SlotQueryItems;
 import dev.gegy.whats_that_slot.ui.window.SlotQueryPopup;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-public final class ScrolledSlotQueryWindow extends GuiComponent implements SlotQueryWindow {
+public final class ScrolledSlotQueryWindow implements SlotQueryWindow {
     private static final ResourceLocation TEXTURE = new ResourceLocation(WhatsThatSlot.ID, "textures/gui/scrolled_window.png");
 
     private static final int TEXTURE_WIDTH = 128;
@@ -64,25 +63,23 @@ public final class ScrolledSlotQueryWindow extends GuiComponent implements SlotQ
     }
 
     @Override
-    public void draw(PoseStack matrices, int mouseX, int mouseY) {
-        RenderSystem.setShaderTexture(0, TEXTURE);
+    public void draw(GuiGraphics graphics, int mouseX, int mouseY) {
+        this.drawBackground(graphics);
+        this.drawScroller(graphics);
 
-        this.drawBackground(matrices);
-        this.drawScroller(matrices);
-
-        this.items.drawItems(matrices);
-        this.items.drawTooltips(matrices, mouseX, mouseY);
+        this.items.drawItems(graphics);
+        this.items.drawTooltips(graphics, mouseX, mouseY);
     }
 
-    private void drawBackground(PoseStack matrices) {
-        blit(matrices, 0, 0, SlotQueryPopup.BLIT_OFFSET, 0, 0, WIDTH, HEIGHT, TEXTURE_HEIGHT, TEXTURE_WIDTH);
+    private void drawBackground(GuiGraphics graphics) {
+        graphics.blit(TEXTURE, 0, 0, SlotQueryPopup.BLIT_OFFSET, 0, 0, WIDTH, HEIGHT, TEXTURE_HEIGHT, TEXTURE_WIDTH);
     }
 
-    private void drawScroller(PoseStack matrices) {
+    private void drawScroller(GuiGraphics graphics) {
         var scroller = this.scrollView.scrollerFromTop(this.scrollbar, this.scrollerBounds);
 
         int v = this.selectedScroller ? SELECTED_SCROLLER_V : SCROLLER_V;
-        this.blit(matrices, scroller, SCROLLER_U, v);
+        this.blit(graphics, scroller, SCROLLER_U, v);
     }
 
     @Override
@@ -146,13 +143,13 @@ public final class ScrolledSlotQueryWindow extends GuiComponent implements SlotQ
         this.items.applyScroll(this.scrollView.scroll());
     }
 
-    @Nonnull
+    @Nullable
     @Override
-    public ItemStack getHoveredItemAt(double x, double y) {
+    public HoveredItem getHoveredItemAt(double x, double y) {
         return this.items.getHoveredItemAt(x, y);
     }
 
-    private void blit(PoseStack matrices, Bounds2i bounds, int u, int v) {
-        blit(matrices, bounds.x0(), bounds.y0(), SlotQueryPopup.BLIT_OFFSET, u, v, bounds.width(), bounds.height(), TEXTURE_HEIGHT, TEXTURE_WIDTH);
+    private void blit(GuiGraphics graphics, Bounds2i bounds, int u, int v) {
+        graphics.blit(TEXTURE, bounds.x0(), bounds.y0(), SlotQueryPopup.BLIT_OFFSET, u, v, bounds.width(), bounds.height(), TEXTURE_HEIGHT, TEXTURE_WIDTH);
     }
 }

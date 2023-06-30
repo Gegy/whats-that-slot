@@ -2,6 +2,7 @@ package dev.gegy.whats_that_slot.ui;
 
 import dev.gegy.whats_that_slot.mixin.AbstractContainerScreenAccess;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.Rect2i;
 
 public record Bounds2i(int x0, int y0, int x1, int y1) {
     public static Bounds2i ofScreen(AbstractContainerScreen<?> screen) {
@@ -48,5 +49,9 @@ public record Bounds2i(int x0, int y0, int x1, int y1) {
 
     public Bounds2i offset(int x, int y) {
         return new Bounds2i(this.x0 + x, this.y0 + y, this.x1 + x, this.y1 + y);
+    }
+
+    public Rect2i toRect() {
+        return new Rect2i(this.x0, this.y0, this.width(), this.height());
     }
 }

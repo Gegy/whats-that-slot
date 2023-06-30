@@ -1,13 +1,11 @@
 package dev.gegy.whats_that_slot.ui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import dev.gegy.whats_that_slot.ui.Bounds2i;
-import dev.gegy.whats_that_slot.ui.SlotQueryInput;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.inventory.Slot;
 
-public final class SlotQueryProgressBar extends GuiComponent {
+public final class SlotQueryProgressBar {
     private static final int WIDTH = 16;
     private static final int HEIGHT = 2;
 
@@ -24,12 +22,12 @@ public final class SlotQueryProgressBar extends GuiComponent {
         this.y0 = screenBounds.y0() + slot.y;
     }
 
-    public void draw(PoseStack matrices, float progress) {
+    public void draw(GuiGraphics graphics, float progress) {
         float displayProgress = computeDisplayProgress(progress);
         if (displayProgress > 0.0F) {
             int x1 = this.x0 + Math.round(WIDTH * displayProgress);
             int y1 = this.y0 + HEIGHT;
-            fill(matrices, this.x0, this.y0, x1, y1, COLOR);
+            graphics.fill(RenderType.guiOverlay(), this.x0, this.y0, x1, y1, COLOR);
         }
     }
 

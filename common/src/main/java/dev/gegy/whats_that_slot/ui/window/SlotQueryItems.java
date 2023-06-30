@@ -1,13 +1,14 @@
 package dev.gegy.whats_that_slot.ui.window;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.gegy.whats_that_slot.query.QueriedItem;
 import dev.gegy.whats_that_slot.ui.Bounds2i;
+import dev.gegy.whats_that_slot.ui.HoveredItem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
@@ -15,7 +16,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public final class SlotQueryItems extends GuiComponent {
+public final class SlotQueryItems {
     private static final Minecraft CLIENT = Minecraft.getInstance();
 
     private static final int HIGHLIGHT_COLOR = 0xFF64AA32;
@@ -36,58 +37,59 @@ public final class SlotQueryItems extends GuiComponent {
         this.scrollIndexOffset = Mth.floor(scroll) * this.grid.countX();
     }
 
-    public void drawItems(PoseStack matrices) {
-        var itemRenderer = CLIENT.getItemRenderer();
+    public void drawItems(GuiGraphics graphics) {
         var player = CLIENT.player;
+        var font = CLIENT.font;
 
-        matrices.pushPose();
-        matrices.translate(0.0, 0.0, SlotQueryPopup.BLIT_OFFSET);
+        graphics.pose().pushPose();
+        graphics.pose().translate(0.0, 0.0, SlotQueryPopup.BLIT_OFFSET);
 
         this.grid.forEach((index, slotX, slotY) -> {
             var item = this.getItemInSlot(index);
             if (item != null) {
                 int screenX = this.screenX(slotX);
                 int screenY = this.screenY(slotY);
-                this.drawItemSlot(matrices, itemRenderer, player, item, screenX, screenY);
+                this.drawItemSlot(graphics, font, player, item, screenX, screenY);
             }
         });
 
-        matrices.popPose();
+        graphics.pose().popPose();
     }
 
-    private void drawItemSlot(PoseStack matrices, ItemRenderer itemRenderer, LocalPlayer player, QueriedItem item, int x, int y) {
+    private void drawItemSlot(GuiGraphics graphics, Font font, LocalPlayer player, QueriedItem item, int x, int y) {
         if (item.highlighted()) {
-            fillGradient(matrices, x, y, x + 16, y + 16, HIGHLIGHT_COLOR, HIGHLIGHT_COLOR);
+            graphics.fillGradient(x, y, x + 16, y + 16, HIGHLIGHT_COLOR, HIGHLIGHT_COLOR);
         }
 
-        itemRenderer.renderAndDecorateItem(matrices, player, item.itemStack(), x, y, 0);
+        graphics.renderItem(player, item.itemStack(), x, y, 0);
+        graphics.renderItemDecorations(font, item.itemStack(), x, y);
     }
 
-    public void drawTooltips(PoseStack matrices, int mouseX, int mouseY) {
+    public void drawTooltips(GuiGraphics graphics, int mouseX, int mouseY) {
         int focusedSlotX = this.slotX(mouseX);
         int focusedSlotY = this.slotY(mouseY);
         if (this.grid.contains(focusedSlotX, focusedSlotY)) {
-            this.drawSlotTooltip(matrices, mouseX, mouseY, focusedSlotX, focusedSlotY);
+            this.drawSlotTooltip(graphics, mouseX, mouseY, focusedSlotX, focusedSlotY);
         }
     }
 
-    private void drawSlotTooltip(PoseStack matrices, int mouseX, int mouseY, int slotX, int slotY) {
+    private void drawSlotTooltip(GuiGraphics graphics, int mouseX, int mouseY, int slotX, int slotY) {
         int screenX = this.screenX(slotX);
         int screenY = this.screenY(slotY);
-        AbstractContainerScreen.renderSlotHighlight(matrices, screenX, screenY, SlotQueryPopup.BLIT_OFFSET);
+        AbstractContainerScreen.renderSlotHighlight(graphics, screenX, screenY, SlotQueryPopup.BLIT_OFFSET);
 
         var item = this.getItemInSlot(slotX, slotY);
         if (item != null) {
-            this.renderItemTooltip(matrices, mouseX, mouseY, item.itemStack());
+            this.renderItemTooltip(graphics, mouseX, mouseY, item.itemStack());
         }
     }
 
-    private void renderItemTooltip(PoseStack matrices, int mouseX, int mouseY, ItemStack item) {
+    private void renderItemTooltip(GuiGraphics graphics, int mouseX, int mouseY, ItemStack item) {
         var screen = CLIENT.screen;
         if (screen != null) {
-            var tooltip = screen.getTooltipFromItem(item);
+            var tooltip = Screen.getTooltipFromItem(CLIENT, item);
             var tooltipData = item.getTooltipImage();
-            screen.renderTooltip(matrices, tooltip, tooltipData, mouseX, mouseY);
+            graphics.renderTooltip(CLIENT.font, tooltip, tooltipData, mouseX, mouseY);
         }
     }
 
@@ -98,16 +100,16 @@ public final class SlotQueryItems extends GuiComponent {
         return this.getItemInSlot(slotX, slotY);
     }
 
-    @Nonnull
-    public ItemStack getHoveredItemAt(double x, double y) {
+    @Nullable
+    public HoveredItem getHoveredItemAt(double x, double y) {
         int slotX = this.slotX(Mth.floor(x));
         int slotY = this.slotY(Mth.floor(y));
 
         var item = this.getItemInSlot(slotX, slotY);
         if (item != null) {
-            return item.itemStack();
+            return new HoveredItem(item.itemStack(), this.slotBounds(slotX, slotY));
         } else {
-            return ItemStack.EMPTY;
+            return null;
         }
     }
 
@@ -144,5 +146,12 @@ public final class SlotQueryItems extends GuiComponent {
 
     private int screenY(int slotY) {
         return this.grid.screenY(slotY) + this.bounds.y0();
+    }
+
+    private Bounds2i slotBounds(int slotX, int slotY) {
+        return new Bounds2i(
+                screenX(slotX), screenY(slotY),
+                screenX(slotX + 1), screenY(slotY + 1)
+        );
     }
 }

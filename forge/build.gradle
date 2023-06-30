@@ -1,13 +1,16 @@
 plugins {
   id 'java'
-  id 'net.minecraftforge.gradle' version '5.1.+'
+  id 'net.minecraftforge.gradle' version '[6.0,6.2)'
   id 'org.spongepowered.mixin' version '0.7+'
+  id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
 
-archivesBaseName = "$mod_name-forge"
+base {
+  archivesName = "$mod_name-fabric"
+}
 
 minecraft {
-  mappings channel: "official", version: "$minecraft_version"
+  mappings channel: "parchment", version: "$parchment_version-$parchment_minecraft_version"
 
   runs {
     client {
@@ -15,6 +18,7 @@ minecraft {
       workingDirectory project.file("run")
       ideaModule "${rootProject.name}.${project.name}.main"
       arg "-mixin.config=${mod_id}.mixins.json"
+      copyIdeResources = true
 
       mods {
         whats_that_slot {
@@ -29,6 +33,7 @@ minecraft {
       workingDirectory project.file("run")
       ideaModule "${rootProject.name}.${project.name}.main"
       arg "-mixin.config=${mod_id}.mixins.json"
+      copyIdeResources = true
 
       mods {
         whats_that_slot {
@@ -44,6 +49,7 @@ minecraft {
       ideaModule "${rootProject.name}.${project.name}.main"
       args "--mod", mod_id, "--all", "--output", file("src/generated/resources/"), "--existing", file("src/main/resources/")
       arg "-mixin.config=${mod_id}.mixins.json"
+      copyIdeResources = true
 
       mods {
         whats_that_slot {
@@ -82,6 +88,22 @@ mixin {
 
 processResources {
   from project(":common").sourceSets.main.resources
+}
+
+def resourceTargets = ['META-INF/mods.toml']
+def replaceProperties = [
+        mod_id: mod_id,
+        mod_version: mod_version,
+        minecraft_version: minecraft_version,
+]
+
+processResources {
+  inputs.properties replaceProperties
+  replaceProperties.put 'project', project
+
+  filesMatching(resourceTargets) {
+    expand replaceProperties
+  }
 }
 
 tasks.withType(JavaCompile).configureEach {

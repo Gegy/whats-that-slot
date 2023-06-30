@@ -1,12 +1,12 @@
 package dev.gegy.whats_that_slot.ui.state;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.gegy.whats_that_slot.query.SlotQuery;
+import dev.gegy.whats_that_slot.ui.HoveredItem;
 import dev.gegy.whats_that_slot.ui.window.SlotQueryPopup;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,8 +35,8 @@ public final class ActiveQueryState implements SlotQueryState {
     }
 
     @Override
-    public void draw(PoseStack matrices, int mouseX, int mouseY, float delta) {
-        this.window.draw(matrices, mouseX, mouseY);
+    public void draw(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        this.window.draw(graphics, mouseX, mouseY);
         this.windowSelected = this.window.isSelected(mouseX, mouseY);
     }
 
@@ -70,8 +70,8 @@ public final class ActiveQueryState implements SlotQueryState {
     }
 
     @Override
-    @Nonnull
-    public ItemStack getHoveredItemAt(double x, double y) {
+    @Nullable
+    public HoveredItem getHoveredItemAt(double x, double y) {
         return this.window.getHoveredItemAt(x, y);
     }
 

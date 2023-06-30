@@ -1,20 +1,22 @@
 package dev.gegy.whats_that_slot.ui.window;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.gegy.whats_that_slot.query.SlotQuery;
 import dev.gegy.whats_that_slot.ui.Bounds2i;
+import dev.gegy.whats_that_slot.ui.HoveredItem;
 import dev.gegy.whats_that_slot.ui.window.texture.ScrolledSlotQueryWindow;
 import dev.gegy.whats_that_slot.ui.window.texture.SlotQueryWindow;
 import dev.gegy.whats_that_slot.ui.window.texture.StaticSlotQueryWindow;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 // TODO: we can group together stacks from the same item if they all apply
-public final class SlotQueryPopup extends GuiComponent {
+public final class SlotQueryPopup {
     public static final int BLIT_OFFSET = 200;
 
     public static final int SLOTS_COUNT_X = 5;
@@ -45,12 +47,12 @@ public final class SlotQueryPopup extends GuiComponent {
         }
     }
 
-    public void draw(PoseStack matrices, int mouseX, int mouseY) {
-        matrices.pushPose();
-        matrices.translate(this.bounds.x0(), this.bounds.y0(), BLIT_OFFSET);
+    public void draw(GuiGraphics graphics, int mouseX, int mouseY) {
+        graphics.pose().pushPose();
+        graphics.pose().translate(this.bounds.x0(), this.bounds.y0(), BLIT_OFFSET);
 
-        this.window.draw(matrices, mouseX - this.bounds.x0(), mouseY - this.bounds.y0());
-        matrices.popPose();
+        this.window.draw(graphics, mouseX - this.bounds.x0(), mouseY - this.bounds.y0());
+        graphics.pose().popPose();
     }
 
     public boolean isSelected(double mouseX, double mouseY) {
@@ -90,8 +92,12 @@ public final class SlotQueryPopup extends GuiComponent {
         return true;
     }
 
-    @Nonnull
-    public ItemStack getHoveredItemAt(double x, double y) {
-        return this.window.getHoveredItemAt(x - this.bounds.x0(), y - this.bounds.y0());
+    @Nullable
+    public HoveredItem getHoveredItemAt(double x, double y) {
+        var hovered = this.window.getHoveredItemAt(x - this.bounds.x0(), y - this.bounds.y0());
+        if (hovered != null) {
+            return new HoveredItem(hovered.stack(), hovered.bounds().offset(this.bounds.x0(), this.bounds.y0()));
+        }
+        return null;
     }
 }
