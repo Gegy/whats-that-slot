@@ -23,7 +23,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 17
+          java-version: 21
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -48,7 +48,7 @@ jobs:
             fabric
 
           java: |
-            17
+            21
 
       - name: Upload to CurseForge and Modrinth (Forge)
         uses: Kir-Antipov/mc-publish@v3.3
@@ -64,7 +64,7 @@ jobs:
             forge
 
           java: |
-            17
+            21
 
       - name: Upload to CurseForge and Modrinth (NeoForge)
         uses: Kir-Antipov/mc-publish@v3.3
@@ -80,4 +80,4 @@ jobs:
             neoforge
 
           java: |
-            17
+            21

@@ -20,7 +20,7 @@ import java.util.Optional;
 public final class WtsJeiPlugin implements IModPlugin {
     @Override
     public ResourceLocation getPluginUid() {
-        return new ResourceLocation(WhatsThatSlot.ID, "jei_plugin");
+        return ResourceLocation.fromNamespaceAndPath(WhatsThatSlot.ID, "jei_plugin");
     }
 
     @Override

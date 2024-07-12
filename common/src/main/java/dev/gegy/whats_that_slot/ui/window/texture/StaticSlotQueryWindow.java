@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import javax.annotation.Nullable;
 
 public final class StaticSlotQueryWindow implements SlotQueryWindow {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(WhatsThatSlot.ID, "textures/gui/static_window.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(WhatsThatSlot.ID, "textures/gui/static_window.png");
 
     private static final int TEXTURE_WIDTH = 128;
     private static final int TEXTURE_HEIGHT = 128;

@@ -17,9 +17,9 @@ import net.minecraft.util.Mth;
 import javax.annotation.Nullable;
 
 public final class ScrolledSlotQueryWindow implements SlotQueryWindow {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(WhatsThatSlot.ID, "textures/gui/scrolled_window.png");
-    private static final ResourceLocation SCROLLER_SPRITE = new ResourceLocation("container/creative_inventory/scroller");
-    private static final ResourceLocation SCROLLER_SELECTED_SPRITE = new ResourceLocation("container/creative_inventory/scroller_disabled");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(WhatsThatSlot.ID, "textures/gui/scrolled_window.png");
+    private static final ResourceLocation SCROLLER_SPRITE = ResourceLocation.withDefaultNamespace("container/creative_inventory/scroller");
+    private static final ResourceLocation SCROLLER_SELECTED_SPRITE = ResourceLocation.withDefaultNamespace("container/creative_inventory/scroller_disabled");
 
     private static final int TEXTURE_WIDTH = 128;
     private static final int TEXTURE_HEIGHT = 128;

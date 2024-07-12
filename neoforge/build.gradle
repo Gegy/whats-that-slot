@@ -1,7 +1,7 @@
 plugins {
   id 'idea'
   id 'java-library'
-  id 'net.neoforged.gradle.userdev' version '7.0.97'
+  id 'net.neoforged.gradle.userdev' version '7.0.145'
 }
 
 base {
@@ -33,7 +33,7 @@ dependencies {
   runtimeOnly "mezz.jei:jei-$jei_minecraft_version-neoforge:$jei_version"
 }
 
-def resourceTargets = ['META-INF/mods.toml']
+def resourceTargets = ['META-INF/neoforge.mods.toml']
 def replaceProperties = [
         mod_id: mod_id,
         mod_version: mod_version,

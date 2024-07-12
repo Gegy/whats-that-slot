@@ -12,6 +12,6 @@ public record QueriedItem(ItemStack itemStack, boolean highlighted) {
     }
 
     public boolean matches(ItemStack target) {
-        return ItemStack.isSameItemSameTags(this.itemStack, target);
+        return ItemStack.isSameItemSameComponents(this.itemStack, target);
     }
 }

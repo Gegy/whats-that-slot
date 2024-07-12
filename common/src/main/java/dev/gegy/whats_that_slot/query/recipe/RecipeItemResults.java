@@ -23,7 +23,7 @@ public record RecipeItemResults(RegistryAccess registryAccess, RecipeManager rec
                 @Override
                 public int hashCode(ItemStack item) {
                     if (item != null) {
-                        return Objects.hash(item.getItem(), item.getTag());
+                        return Objects.hash(item.getItem(), item.getComponents());
                     } else {
                         return 0;
                     }
@@ -31,7 +31,7 @@ public record RecipeItemResults(RegistryAccess registryAccess, RecipeManager rec
 
                 @Override
                 public boolean equals(ItemStack a, ItemStack b) {
-                    return a == b || (a != null && b != null && ItemStack.isSameItemSameTags(a, b));
+                    return a == b || (a != null && b != null && ItemStack.isSameItemSameComponents(a, b));
                 }
             };
 

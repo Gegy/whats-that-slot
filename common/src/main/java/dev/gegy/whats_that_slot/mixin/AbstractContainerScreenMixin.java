@@ -54,7 +54,7 @@ public class AbstractContainerScreenMixin implements SlotQueryingScreen {
 
     @Inject(method = "renderTooltip(Lnet/minecraft/client/gui/GuiGraphics;II)V", at = @At("HEAD"))
     private void drawQueryDisplay(GuiGraphics graphics, int mouseX, int mouseY, CallbackInfo ci) {
-        float delta = Minecraft.getInstance().getDeltaFrameTime();
+        float delta = Minecraft.getInstance().getTimer().getRealtimeDeltaTicks();
         this.queryController.draw(graphics, mouseX, mouseY, delta);
     }
 

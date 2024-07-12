@@ -10,7 +10,7 @@ subprojects {
   version = "$mod_version+$minecraft_version" + (release ? "" : "-beta")
 
   java {
-    toolchain.languageVersion = JavaLanguageVersion.of(17)
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
     withSourcesJar()
   }
 
@@ -47,7 +47,7 @@ subprojects {
 
   tasks.withType(JavaCompile).configureEach {
     it.options.encoding = 'UTF-8'
-    it.options.release = 17
+    it.options.release = 21
   }
 
   tasks.withType(GenerateModuleMetadata).configureEach {

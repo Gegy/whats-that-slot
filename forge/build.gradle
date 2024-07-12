@@ -1,6 +1,6 @@
 plugins {
   id 'java'
-  id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
+  id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
   id 'org.spongepowered.mixin' version '0.7+'
   id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
@@ -49,8 +49,12 @@ dependencies {
 
   minecraft "net.minecraftforge:forge:$minecraft_version-$forge_version"
 
-  compileOnly fg.deobf("mezz.jei:jei-$jei_minecraft_version-common-api:$jei_version")
-  runtimeOnly fg.deobf("mezz.jei:jei-$jei_minecraft_version-forge:$jei_version")
+  compileOnly "mezz.jei:jei-$jei_minecraft_version-common-api:$jei_version"
+  runtimeOnly "mezz.jei:jei-$jei_minecraft_version-forge:$jei_version"
+
+  // Hack fix for now, force jopt-simple to be exactly 5.0.4 because Mojang ships that version, but some transitive dependencies request 6.0+
+  // See https://github.com/MinecraftForge/MinecraftForge/blob/1.21.x/mdk/build.gradle#L145
+  implementation('net.sf.jopt-simple:jopt-simple:5.0.4') { version { strictly '5.0.4' } }
 
   if (System.getProperty("idea.sync.active") != "true") {
     annotationProcessor "org.spongepowered:mixin:0.8.5:processor"

@@ -74,7 +74,7 @@ public final class SlotQueryGenerator {
         private final Predicate<ItemStack> filter;
         private final Iterator<ItemStack> inventoryIterator;
 
-        private final Set<ItemStack> inventoryMatches = ItemStackLinkedSet.createTypeAndTagSet();
+        private final Set<ItemStack> inventoryMatches = ItemStackLinkedSet.createTypeAndComponentsSet();
 
         private MatchingInventory(AbstractContainerScreen<?> screen, Predicate<ItemStack> filter) {
             this.filter = filter;
