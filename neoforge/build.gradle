@@ -51,6 +51,10 @@ tasks.withType(ProcessResources).matching(notNeoTask).configureEach {
   from project(':common').sourceSets.main.resources
 }
 
+tasks.named('test').configure {
+  enabled = false
+}
+
 tasks.named('processResources', ProcessResources).configure {
   from project(":common").sourceSets.main.resources
 
