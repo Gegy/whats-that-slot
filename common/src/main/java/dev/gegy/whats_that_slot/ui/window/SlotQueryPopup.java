@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 
 // TODO: we can group together stacks from the same item if they all apply
 public final class SlotQueryPopup {
-    public static final int BLIT_OFFSET = 200;
+    public static final int BLIT_OFFSET = 400;
 
     public static final int SLOTS_COUNT_X = 5;
     public static final int MAX_SLOTS_COUNT_Y = 5;

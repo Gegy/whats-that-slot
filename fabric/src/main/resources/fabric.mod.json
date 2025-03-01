@@ -1,19 +1,28 @@
 {
   "schemaVersion": 1,
   "id": "whats_that_slot",
-  "version": "${version}",
+  "version": "1.3.7",
   "name": "What's That Slot?",
   "description": "Utility that highlights which items can be placed in an item slot while holding down Left Alt.",
-  "authors": ["Gegy"],
+  "authors": [
+    "Gegy"
+  ],
+  "contact": {
+    "sources": "https://github.com/Gegy/whats-that-slot",
+    "issues": "https://github.com/Gegy/whats-that-slot/issues"
+  },
   "license": "LGPLv3",
   "environment": "client",
   "entrypoints": {
     "rei_client": ["dev.gegy.whats_that_slot.integration.rei.WtsReiClientPlugin"]
   },
-  "mixins": ["whats_that_slot.mixins.json"],
+  "mixins": [
+    "whats_that_slot.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=0.14",
-    "minecraft": ">=1.20.4",
-    "java": ">=17"
+    "fabric-api": "*",
+    "minecraft": "1.21.4",
+    "java": ">=21"
   }
 }

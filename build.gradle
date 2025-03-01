@@ -1,10 +1,52 @@
 plugins {
-  // Required for NeoGradle
+  id 'net.neoforged.moddev' version '2.0.74' apply false
+  id 'fabric-loom' version '1.9-SNAPSHOT' apply false
   id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.7'
 }
 
+tasks.register('generateModManifests') {
+  final def expandProps = [
+          'version'                      : mod_version,
+          'group'                        : project.group,
+          'minecraft_version'            : minecraft_version,
+          'minecraft_version_range'      : minecraft_version_range,
+          'fabric_version'               : fabric_version,
+          'fabric_loader_version'        : fabric_loader_version,
+          'mod_name'                     : mod_name,
+          'mod_author'                   : mod_author,
+          'mod_id'                       : mod_id,
+          'license'                      : license,
+          'description'                  : project.description,
+          'neoforge_version'             : neoforge_version,
+          'neoforge_loader_version_range': neoforge_loader_version_range,
+          'credits'                      : credits,
+          'sources'                      : sources,
+          'issue_tracker'                : issue_tracker,
+  ]
+
+  inputs.properties expandProps
+
+  final def templateFiles = fileTree('.').matching {
+    include '**/*.template'
+  }.files
+
+  templateFiles.each { templateFile ->
+    final def targetFile = new File(templateFile.parentFile, templateFile.name.substring(0, templateFile.name.length() - '.template'.length()))
+    inputs.file templateFile
+    outputs.file targetFile
+    doLast {
+      copy {
+        from templateFile
+        into targetFile.parentFile
+        rename { targetFile.name }
+        expand expandProps
+      }
+    }
+  }
+}
+
 subprojects {
-  apply plugin: 'java'
+  apply plugin: 'java-library'
 
   group = maven_group
   version = "$mod_version+$minecraft_version" + (release ? "" : "-beta")
@@ -16,32 +58,19 @@ subprojects {
 
   repositories {
     mavenCentral()
-    maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
-    maven { url "https://maven.gegy.dev/" }
-    maven { url "https://maven.parchmentmc.org/" }
-  }
-
-  dependencies {
-    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+    maven {
+      url = 'https://repo.spongepowered.org/repository/maven-public/'
+      content { includeGroup 'org.spongepowered' }
+    }
+    maven {
+      url = 'https://maven.parchmentmc.org/'
+      content { includeGroup 'org.parchmentmc.data' }
+    }
   }
 
   jar {
-    manifest {
-      attributes([
-          'Specification-Title'     : mod_name,
-          'Specification-Vendor'    : "Gegy",
-          'Specification-Version'   : mod_version,
-          'Implementation-Title'    : mod_name,
-          'Implementation-Version'  : mod_version,
-          'Implementation-Vendor'   : "Gegy",
-          'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-          'Timestamp'               : System.currentTimeMillis(),
-          "MixinConfigs"            : "${mod_id}.mixins.json"
-      ])
-    }
-
-    from("LICENSE") {
-      rename { "${it}_${mod_name}" }
+    from(rootProject.file('LICENSE')) {
+      rename { "${it}_${mod_id}" }
     }
   }
 
@@ -50,7 +79,20 @@ subprojects {
     it.options.release = 21
   }
 
+  tasks.withType(ProcessResources).configureEach {
+    dependsOn generateModManifests
+    exclude '**/*.template'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+  }
+
   tasks.withType(GenerateModuleMetadata).configureEach {
     enabled = false
+  }
+}
+
+idea {
+  module {
+    downloadSources = true
+    downloadJavadoc = true
   }
 }

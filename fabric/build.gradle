@@ -1,24 +1,27 @@
 plugins {
-  id 'fabric-loom' version '1.7-SNAPSHOT'
+  id 'fabric-loom'
 }
 
 base {
-  archivesName = "$mod_name-fabric"
+  archivesName = "$mod_file_name-fabric"
 }
 
 loom {
+  mixin {
+    defaultRefmapName.set("${mod_id}.refmap.json")
+  }
   runs {
     client {
       client()
-      setConfigName "Fabric Client"
+      setConfigName 'Fabric Client'
       ideConfigGenerated true
-      runDir "run"
+      runDir '../run'
     }
-    server {
-      server()
-      setConfigName "Fabric Server"
-      ideConfigGenerated true
-      runDir "run"
+  }
+  mods {
+    "${mod_id}" {
+      sourceSet project(':common').sourceSets.main
+      sourceSet project.sourceSets.main
     }
   }
 }
@@ -31,30 +34,26 @@ dependencies {
   implementation project(':common')
 
   minecraft "com.mojang:minecraft:$minecraft_version"
-  mappings loom.layered() {
+  mappings loom.layered {
     officialMojangMappings()
-    parchment("org.parchmentmc.data:parchment-$parchment_minecraft_version:$parchment_version@zip")
+    parchment("org.parchmentmc.data:parchment-${minecraft_version}:${parchment_version}@zip")
   }
 
-  modImplementation "net.fabricmc:fabric-loader:${loader_version}"
+  modImplementation "net.fabricmc:fabric-loader:$fabric_loader_version"
   modImplementation(include(fabricApi.module("fabric-resource-loader-v0", fabric_version)))
 
-  modCompileOnly "dev.architectury:architectury-fabric:11.1.13"
-  modCompileOnly "me.shedaniel.cloth:basic-math:0.6.1"
+  modCompileOnly "dev.architectury:architectury-fabric:$architectury_version"
+  modCompileOnly "me.shedaniel.cloth:basic-math:$cloth_version"
   modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:$rei_version"
   modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:$rei_version"
-}
 
-processResources {
-  from project(':common').sourceSets.main.resources
-
-  inputs.property "version", project.version
-
-  filesMatching("fabric.mod.json") {
-    expand "version": project.version
-  }
+  implementation 'com.google.code.findbugs:jsr305:3.0.1'
 }
 
 tasks.withType(JavaCompile).configureEach {
   source project(':common').sourceSets.main.allSource
+}
+
+processResources {
+  from project(':common').sourceSets.main.resources
 }

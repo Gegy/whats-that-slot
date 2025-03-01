@@ -9,6 +9,7 @@ import dev.gegy.whats_that_slot.ui.window.SlotQueryActions;
 import dev.gegy.whats_that_slot.ui.window.SlotQueryItems;
 import dev.gegy.whats_that_slot.ui.window.SlotQueryPopup;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -43,18 +44,17 @@ public final class StaticSlotQueryWindow implements SlotQueryWindow {
     public void draw(GuiGraphics graphics, int mouseX, int mouseY) {
         this.drawBackground(graphics);
 
-        this.items.drawItems(graphics);
-        this.items.drawTooltips(graphics, mouseX, mouseY);
+        this.items.drawItems(graphics, mouseX, mouseY);
     }
 
     private void drawBackground(GuiGraphics graphics) {
-        graphics.blit(TEXTURE, 0, 0, SlotQueryPopup.BLIT_OFFSET, 0, 0, WIDTH, BORDER, TEXTURE_HEIGHT, TEXTURE_WIDTH);
+        graphics.blit(RenderType::guiTextured, TEXTURE, 0, 0, 0, 0, WIDTH, BORDER, TEXTURE_HEIGHT, TEXTURE_WIDTH);
 
         for (int i = 0; i < this.grid.countY(); i++) {
-            graphics.blit(TEXTURE, 0, BORDER + i * SLOT_SIZE, SlotQueryPopup.BLIT_OFFSET, 0, 6, WIDTH, SLOT_SIZE, TEXTURE_HEIGHT, TEXTURE_WIDTH);
+            graphics.blit(RenderType::guiTextured, TEXTURE, 0, BORDER + i * SLOT_SIZE, 0, 6, WIDTH, SLOT_SIZE, TEXTURE_HEIGHT, TEXTURE_WIDTH);
         }
 
-        graphics.blit(TEXTURE, 0, BORDER + this.grid.countY() * SLOT_SIZE, SlotQueryPopup.BLIT_OFFSET, 0, 24, WIDTH, BORDER, TEXTURE_HEIGHT, TEXTURE_WIDTH);
+        graphics.blit(RenderType::guiTextured, TEXTURE, 0, BORDER + this.grid.countY() * SLOT_SIZE, 0, 24, WIDTH, BORDER, TEXTURE_HEIGHT, TEXTURE_WIDTH);
     }
 
     @Override

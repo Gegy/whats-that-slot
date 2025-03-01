@@ -45,7 +45,7 @@ public final class ScreenSlotActions {
             var action = iterator.next();
             action.run(screen, (AbstractContainerScreenAccess) screen);
 
-            client.tell(() -> this.executeNextAction(client, screen, iterator));
+            client.execute(() -> this.executeNextAction(client, screen, iterator));
         }
     }
 

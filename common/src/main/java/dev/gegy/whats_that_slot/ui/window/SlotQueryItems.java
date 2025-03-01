@@ -7,12 +7,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -20,6 +20,8 @@ public final class SlotQueryItems {
     private static final Minecraft CLIENT = Minecraft.getInstance();
 
     private static final int HIGHLIGHT_COLOR = 0xFF64AA32;
+    private static final ResourceLocation SLOT_HIGHLIGHT_BACK_SPRITE = ResourceLocation.withDefaultNamespace("container/slot_highlight_back");
+    private static final ResourceLocation SLOT_HIGHLIGHT_FRONT_SPRITE = ResourceLocation.withDefaultNamespace("container/slot_highlight_front");
 
     private final Bounds2i bounds;
     private final SlotGridLayout grid;
@@ -37,12 +39,21 @@ public final class SlotQueryItems {
         this.scrollIndexOffset = Mth.floor(scroll) * this.grid.countX();
     }
 
-    public void drawItems(GuiGraphics graphics) {
+    public void drawItems(GuiGraphics graphics, int mouseX, int mouseY) {
         var player = CLIENT.player;
         var font = CLIENT.font;
 
         graphics.pose().pushPose();
         graphics.pose().translate(0.0, 0.0, SlotQueryPopup.BLIT_OFFSET);
+
+        int focusedSlotX = this.slotX(mouseX);
+        int focusedSlotY = this.slotY(mouseY);
+        int focusedSlotScreenX = this.screenX(focusedSlotX);
+        int focusedSlotScreenY = this.screenY(focusedSlotY);
+
+        if (this.grid.contains(focusedSlotX, focusedSlotY)) {
+            graphics.blitSprite(RenderType::guiTexturedOverlay, SLOT_HIGHLIGHT_BACK_SPRITE, focusedSlotScreenX - 4, focusedSlotScreenY - 4, 24, 24);
+        }
 
         this.grid.forEach((index, slotX, slotY) -> {
             var item = this.getItemInSlot(index);
@@ -52,6 +63,11 @@ public final class SlotQueryItems {
                 this.drawItemSlot(graphics, font, player, item, screenX, screenY);
             }
         });
+
+        if (this.grid.contains(focusedSlotX, focusedSlotY)) {
+            graphics.blitSprite(RenderType::guiTexturedOverlay, SLOT_HIGHLIGHT_FRONT_SPRITE, focusedSlotScreenX - 4, focusedSlotScreenY - 4, 24, 24);
+            this.drawSlotTooltip(graphics, mouseX, mouseY, focusedSlotX, focusedSlotY);
+        }
 
         graphics.pose().popPose();
     }
@@ -65,19 +81,7 @@ public final class SlotQueryItems {
         graphics.renderItemDecorations(font, item.itemStack(), x, y);
     }
 
-    public void drawTooltips(GuiGraphics graphics, int mouseX, int mouseY) {
-        int focusedSlotX = this.slotX(mouseX);
-        int focusedSlotY = this.slotY(mouseY);
-        if (this.grid.contains(focusedSlotX, focusedSlotY)) {
-            this.drawSlotTooltip(graphics, mouseX, mouseY, focusedSlotX, focusedSlotY);
-        }
-    }
-
     private void drawSlotTooltip(GuiGraphics graphics, int mouseX, int mouseY, int slotX, int slotY) {
-        int screenX = this.screenX(slotX);
-        int screenY = this.screenY(slotY);
-        AbstractContainerScreen.renderSlotHighlight(graphics, screenX, screenY, SlotQueryPopup.BLIT_OFFSET);
-
         var item = this.getItemInSlot(slotX, slotY);
         if (item != null) {
             this.renderItemTooltip(graphics, mouseX, mouseY, item.itemStack());

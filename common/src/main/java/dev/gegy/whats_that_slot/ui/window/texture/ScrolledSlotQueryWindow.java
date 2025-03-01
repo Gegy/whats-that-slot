@@ -11,6 +11,7 @@ import dev.gegy.whats_that_slot.ui.window.SlotQueryActions;
 import dev.gegy.whats_that_slot.ui.window.SlotQueryItems;
 import dev.gegy.whats_that_slot.ui.window.SlotQueryPopup;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
@@ -65,12 +66,11 @@ public final class ScrolledSlotQueryWindow implements SlotQueryWindow {
         this.drawBackground(graphics);
         this.drawScroller(graphics);
 
-        this.items.drawItems(graphics);
-        this.items.drawTooltips(graphics, mouseX, mouseY);
+        this.items.drawItems(graphics, mouseX, mouseY);
     }
 
     private void drawBackground(GuiGraphics graphics) {
-        graphics.blit(TEXTURE, 0, 0, SlotQueryPopup.BLIT_OFFSET, 0, 0, WIDTH, HEIGHT, TEXTURE_HEIGHT, TEXTURE_WIDTH);
+        graphics.blit(RenderType::guiTextured, TEXTURE, 0, 0, 0, 0, WIDTH, HEIGHT, TEXTURE_HEIGHT, TEXTURE_WIDTH);
     }
 
     private void drawScroller(GuiGraphics graphics) {
@@ -147,6 +147,6 @@ public final class ScrolledSlotQueryWindow implements SlotQueryWindow {
     }
 
     private void blitSprite(GuiGraphics graphics, Bounds2i bounds, ResourceLocation sprite) {
-        graphics.blitSprite(sprite, bounds.x0(), bounds.y0(), SlotQueryPopup.BLIT_OFFSET, bounds.width(), bounds.height());
+        graphics.blitSprite(RenderType::guiTextured, sprite, bounds.x0(), bounds.y0(), bounds.width(), bounds.height());
     }
 }
