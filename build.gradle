@@ -85,6 +85,10 @@ subprojects {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
   }
 
+  tasks.withType(Jar).configureEach {
+    dependsOn generateModManifests
+  }
+
   tasks.withType(GenerateModuleMetadata).configureEach {
     enabled = false
   }
