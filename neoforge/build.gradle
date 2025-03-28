@@ -10,7 +10,7 @@ neoForge {
   version = neoforge_version
 
   parchment {
-    minecraftVersion = minecraft_version
+    minecraftVersion = parchment_minecraft
     mappingsVersion = parchment_version
   }
 
