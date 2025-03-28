@@ -1,3 +1,4 @@
+/*
 package dev.gegy.whats_that_slot.integration.rei;
 
 import dev.architectury.event.CompoundEventResult;
@@ -20,3 +21,4 @@ public final class WtsReiClientPlugin implements REIClientPlugin {
         });
     }
 }
+*/

@@ -14,14 +14,14 @@
   "license": "${license}",
   "environment": "client",
   "entrypoints": {
-    "rei_client": ["dev.gegy.whats_that_slot.integration.rei.WtsReiClientPlugin"]
+    "main": ["dev.gegy.whats_that_slot.WhatsThatSlotInitializer"],
+    "_rei_client": ["dev.gegy.whats_that_slot.integration.rei.WtsReiClientPlugin"]
   },
   "mixins": [
     "${mod_id}.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.14",
-    "fabric-api": "*",
     "minecraft": "${minecraft_version}",
     "java": ">=21"
   }

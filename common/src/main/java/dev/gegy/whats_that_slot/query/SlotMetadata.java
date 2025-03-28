@@ -7,14 +7,11 @@ import dev.gegy.whats_that_slot.query.recipe.RecipeItemResults;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.recipebook.SearchRecipeBookCategory;
-import net.minecraft.util.context.ContextMap;
 import net.minecraft.world.inventory.FurnaceResultSlot;
 import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.ExtendedRecipeBookCategory;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 
 import javax.annotation.Nullable;
@@ -29,7 +26,11 @@ public final class SlotMetadata {
     static {
         var placeTest = findPlaceTestMethod();
         if (placeTest == null) {
-            WhatsThatSlot.LOGGER.warn("Unable to find mayPlace method on Slot! Something is very wrong, but we can safely ignore it.");
+            if (WhatsThatSlot.isDevelopment) {
+                throw new IllegalStateException("Unable to find Slot.mayPlace");
+            } else {
+                WhatsThatSlot.LOGGER.warn("Unable to find Slot.mayPlace! Something is very wrong, but we can safely ignore it.");
+            }
         }
 
         SUPER_PLACE_TEST = placeTest;

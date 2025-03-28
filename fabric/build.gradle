@@ -42,10 +42,12 @@ dependencies {
   modImplementation "net.fabricmc:fabric-loader:$fabric_loader_version"
   modImplementation(include(fabricApi.module("fabric-resource-loader-v0", fabric_version)))
 
+  /*
   modCompileOnly "dev.architectury:architectury-fabric:$architectury_version"
   modCompileOnly "me.shedaniel.cloth:basic-math:$cloth_version"
   modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:$rei_version"
   modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:$rei_version"
+   */
 
   implementation 'com.google.code.findbugs:jsr305:3.0.1'
 }
